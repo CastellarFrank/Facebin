@@ -42,7 +42,7 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
         jLabel4 = new javax.swing.JLabel();
         btnEntrar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -146,12 +146,13 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
         String contraseña="master";
         
         if(txtCorreo.getText().equals(correo) && txtContraseña.getText().equals(contraseña)){
-            probando prob=new probando();
+            probando prob=new probando("FACEBIN, Página Principal");
             prob.setVisible(true);
             this.setVisible(false);
         }else{
             JOptionPane.showMessageDialog(null, "EL correo o la contraseña ingresadas son incorrectos","Datos Incorrectos",
                     JOptionPane.INFORMATION_MESSAGE);
+            this.txtCorreo.requestFocus();
         }
         
     }//GEN-LAST:event_btnEntrarMouseClicked
@@ -177,7 +178,7 @@ private void txtContraseñaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:
 private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
     
     
-    this.setLocation(((tamañoPantalla.width/2)-400),((tamañoPantalla.height/2)-200));
+    this.setLocation(((tamañoPantalla.width/2)-450),((tamañoPantalla.height/2)-200));
     Registrar registro=new Registrar("Registrar una nueva cuenta");
 }//GEN-LAST:event_jLabel3MouseClicked
 
