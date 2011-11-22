@@ -1,4 +1,5 @@
 
+import java.awt.Cursor;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
@@ -18,11 +19,14 @@ import javax.swing.JOptionPane;
  * @author NIGHTMARE
  */
 public class IniciarSesion extends javax.swing.JFrame {
+    public static boolean registroAbierto=false;
+    Registrar registro=new Registrar("Registrar una nueva cuenta"); 
 static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenSize();
     /** Creates new form IniciarSesion */
     public IniciarSesion(String t){
         initComponents();
         this.setTitle(t);
+        this.setResizable(false);
     }
 
     /** This method is called from within the constructor to
@@ -44,6 +48,11 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                formMouseEntered(evt);
+            }
+        });
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
@@ -65,12 +74,15 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11));
         jLabel3.setForeground(new java.awt.Color(0, 51, 255));
         jLabel3.setText("Registrar una nueva cuenta");
         jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel3MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLabel3MouseEntered(evt);
             }
         });
 
@@ -82,6 +94,9 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
         btnEntrar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnEntrarMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnEntrarMouseEntered(evt);
             }
         });
         btnEntrar.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -171,16 +186,33 @@ private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_form
 
 private void txtContraseñaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtContraseñaKeyPressed
  if(evt.getKeyCode()==KeyEvent.VK_ENTER){
-        this.btnEntrarMouseClicked(null);                
+        
+     this.btnEntrarMouseClicked(null);                
     }
 }//GEN-LAST:event_txtContraseñaKeyPressed
 
 private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
     
+    if(registroAbierto==false){
+        this.setLocation(((tamañoPantalla.width/2)-450),((tamañoPantalla.height/2)-200));
+        registro.setVisible(true);
+        registroAbierto=true;
+    }
+    registro.toFront();
     
-    this.setLocation(((tamañoPantalla.width/2)-450),((tamañoPantalla.height/2)-200));
-    Registrar registro=new Registrar("Registrar una nueva cuenta");
 }//GEN-LAST:event_jLabel3MouseClicked
+
+private void btnEntrarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEntrarMouseEntered
+    this.setCursor(Cursor.HAND_CURSOR);
+}//GEN-LAST:event_btnEntrarMouseEntered
+
+private void formMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseEntered
+    this.setCursor(Cursor.DEFAULT_CURSOR);
+}//GEN-LAST:event_formMouseEntered
+
+private void jLabel3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseEntered
+    this.setCursor(Cursor.HAND_CURSOR);
+}//GEN-LAST:event_jLabel3MouseEntered
 
     /**
      * @param args the command line arguments

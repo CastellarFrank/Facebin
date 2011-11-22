@@ -1,5 +1,7 @@
 
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /*
  * To change this template, choose Tools | Templates
@@ -13,6 +15,7 @@ import java.awt.Toolkit;
  */
 /**
  *
+ * 
  * @author NIGHTMARE
  */
 public class Registrar extends javax.swing.JFrame {
@@ -22,10 +25,25 @@ public class Registrar extends javax.swing.JFrame {
     public Registrar(String t){
         initComponents();
         this.setTitle(t);
-        this.setVisible(true);
         this.setSize(400, 600);
         this.setLocation(((pantallaTamaño.width/2)+100),((pantallaTamaño.height/2)-300));
+        this.setResizable(false);
+        
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent we) {
+                cerrar();
+            }
+        });
     }
+    public void cerrar(){
+        IniciarSesion.registroAbierto=false;
+        this.dispose();
+        
+    }
+    
+    
+    
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -56,6 +74,7 @@ public class Registrar extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
+    
 //    public static void main(String args[]) {
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //
@@ -63,6 +82,7 @@ public class Registrar extends javax.swing.JFrame {
 //
 //
 //            }
+//            
 //        });
 //    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
