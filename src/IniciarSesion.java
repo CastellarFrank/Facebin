@@ -1,4 +1,5 @@
 
+import java.awt.Cursor;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
@@ -18,11 +19,21 @@ import javax.swing.JOptionPane;
  * @author NIGHTMARE
  */
 public class IniciarSesion extends javax.swing.JFrame {
+    public static boolean registroAbierto=false;
+    
 static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenSize();
     /** Creates new form IniciarSesion */
-    public IniciarSesion(String t){
+
+    public IniciarSesion(){
         initComponents();
-        this.setTitle(t);
+        this.setTitle("FACEBIN");
+        this.setResizable(false);
+        this.setVisible(true);
+        this.setSize(500, 400);
+        definirPosicionCentral();
+    }
+    public void definirPosicionCentral(){
+        this.setLocation(((tamañoPantalla.width/2)-(250)),((tamañoPantalla.height/2)-200));
     }
 
     /** This method is called from within the constructor to
@@ -42,8 +53,13 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
         jLabel4 = new javax.swing.JLabel();
         btnEntrar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                formMouseEntered(evt);
+            }
+        });
         addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 formKeyPressed(evt);
@@ -65,12 +81,15 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 11));
         jLabel3.setForeground(new java.awt.Color(0, 51, 255));
         jLabel3.setText("Registrar una nueva cuenta");
         jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel3MouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLabel3MouseEntered(evt);
             }
         });
 
@@ -82,6 +101,9 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
         btnEntrar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnEntrarMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnEntrarMouseEntered(evt);
             }
         });
         btnEntrar.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -146,12 +168,12 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
         String contraseña="master";
         
         if(txtCorreo.getText().equals(correo) && txtContraseña.getText().equals(contraseña)){
-            probando prob=new probando();
-            prob.setVisible(true);
+            ControlVentanas.face.setVisible(true);
             this.setVisible(false);
         }else{
             JOptionPane.showMessageDialog(null, "EL correo o la contraseña ingresadas son incorrectos","Datos Incorrectos",
                     JOptionPane.INFORMATION_MESSAGE);
+            this.txtCorreo.requestFocus();
         }
         
     }//GEN-LAST:event_btnEntrarMouseClicked
@@ -170,31 +192,45 @@ private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_form
 
 private void txtContraseñaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtContraseñaKeyPressed
  if(evt.getKeyCode()==KeyEvent.VK_ENTER){
-        this.btnEntrarMouseClicked(null);                
+        
+     this.btnEntrarMouseClicked(null);                
     }
 }//GEN-LAST:event_txtContraseñaKeyPressed
 
 private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
     
+    if(registroAbierto==false){
+        this.setLocation(((tamañoPantalla.width/2)-450),((tamañoPantalla.height/2)-200));
+        ControlVentanas.registro.setVisible(true);
+        registroAbierto=true;
+    }
+    ControlVentanas.registro.toFront();
     
-    this.setLocation(((tamañoPantalla.width/2)-400),((tamañoPantalla.height/2)-200));
-    Registrar registro=new Registrar("Registrar una nueva cuenta");
 }//GEN-LAST:event_jLabel3MouseClicked
+
+private void btnEntrarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEntrarMouseEntered
+    this.setCursor(Cursor.HAND_CURSOR);
+}//GEN-LAST:event_btnEntrarMouseEntered
+
+private void formMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseEntered
+    this.setCursor(Cursor.DEFAULT_CURSOR);
+}//GEN-LAST:event_formMouseEntered
+
+private void jLabel3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseEntered
+    this.setCursor(Cursor.HAND_CURSOR);
+}//GEN-LAST:event_jLabel3MouseEntered
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                IniciarSesion login=new IniciarSesion("FACEBIN");
-                login.setVisible(true);
-                login.setSize(500, 400);
-                login.setLocation(((tamañoPantalla.width/2)-(250)),((tamañoPantalla.height/2)-200));
-            }
-        });
-    }
+//    public static void main(String args[]) {
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//
+//            public void run() {
+//                
+//            }
+//        });
+//    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEntrar;
     private javax.swing.JLabel jLabel1;
