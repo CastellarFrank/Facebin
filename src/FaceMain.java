@@ -8,7 +8,7 @@ import javax.swing.JFrame;
  */
 
 /*
- * probando.java
+ * FaceMain.java
  *
  * Created on 11-21-2011, 02:10:03 PM
  */
@@ -16,12 +16,15 @@ import javax.swing.JFrame;
  *
  * @author NIGHTMARE
  */
-public class probando extends javax.swing.JFrame {
-    /** Creates new form probando */
-    public probando(String t) {
+public class FaceMain extends javax.swing.JFrame {
+    java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenSize();
+    /** Creates new form FaceMain */
+    public FaceMain(String t) {
         initComponents();
         this.setTitle(t);
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setSize(1200,668);
+        this.setLocation(((tamañoPantalla.width/2)-((1200)/2)), ((tamañoPantalla.height/2)-((668)/2)));
+        
     }
 
     /** This method is called from within the constructor to
@@ -35,7 +38,7 @@ public class probando extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         jLabel1.setText("ENTRASTE CABRÓN");
@@ -45,16 +48,16 @@ public class probando extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(455, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(375, 375, 375))
+                .addContainerGap(605, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addGap(565, 565, 565))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(290, 290, 290)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(410, Short.MAX_VALUE))
+                .addGap(287, 287, 287)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(345, Short.MAX_VALUE))
         );
 
         pack();
@@ -67,7 +70,7 @@ public class probando extends javax.swing.JFrame {
 //        java.awt.EventQueue.invokeLater(new Runnable() {
 //
 //            public void run() {
-//                new probando().setVisible(true);
+//                new FaceMain().setVisible(true);
 //            }
 //        });
 //    }

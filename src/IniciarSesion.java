@@ -20,13 +20,20 @@ import javax.swing.JOptionPane;
  */
 public class IniciarSesion extends javax.swing.JFrame {
     public static boolean registroAbierto=false;
-    Registrar registro=new Registrar("Registrar una nueva cuenta"); 
+    
 static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenSize();
     /** Creates new form IniciarSesion */
-    public IniciarSesion(String t){
+
+    public IniciarSesion(){
         initComponents();
-        this.setTitle(t);
+        this.setTitle("FACEBIN");
         this.setResizable(false);
+        this.setVisible(true);
+        this.setSize(500, 400);
+        definirPosicionCentral();
+    }
+    public void definirPosicionCentral(){
+        this.setLocation(((tamañoPantalla.width/2)-(250)),((tamañoPantalla.height/2)-200));
     }
 
     /** This method is called from within the constructor to
@@ -161,8 +168,7 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
         String contraseña="master";
         
         if(txtCorreo.getText().equals(correo) && txtContraseña.getText().equals(contraseña)){
-            probando prob=new probando("FACEBIN, Página Principal");
-            prob.setVisible(true);
+            ControlVentanas.face.setVisible(true);
             this.setVisible(false);
         }else{
             JOptionPane.showMessageDialog(null, "EL correo o la contraseña ingresadas son incorrectos","Datos Incorrectos",
@@ -195,10 +201,10 @@ private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     
     if(registroAbierto==false){
         this.setLocation(((tamañoPantalla.width/2)-450),((tamañoPantalla.height/2)-200));
-        registro.setVisible(true);
+        ControlVentanas.registro.setVisible(true);
         registroAbierto=true;
     }
-    registro.toFront();
+    ControlVentanas.registro.toFront();
     
 }//GEN-LAST:event_jLabel3MouseClicked
 
@@ -217,17 +223,14 @@ private void jLabel3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-
-            public void run() {
-                IniciarSesion login=new IniciarSesion("FACEBIN");
-                login.setVisible(true);
-                login.setSize(500, 400);
-                login.setLocation(((tamañoPantalla.width/2)-(250)),((tamañoPantalla.height/2)-200));
-            }
-        });
-    }
+//    public static void main(String args[]) {
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//
+//            public void run() {
+//                
+//            }
+//        });
+//    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnEntrar;
     private javax.swing.JLabel jLabel1;
