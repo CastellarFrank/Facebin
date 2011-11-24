@@ -1,3 +1,5 @@
+package ClasesVentanas;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -13,7 +15,7 @@
  * @author NIGHTMARE
  */
 public abstract class ControlVentanas extends javax.swing.JFrame {
-    static IniciarSesion inicio;
+    public static IniciarSesion inicio;
     static Registrar registro;
     static FaceMain face;
     /** Creates new form ControlVentanas */

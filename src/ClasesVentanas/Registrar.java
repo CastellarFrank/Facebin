@@ -1,9 +1,12 @@
+package ClasesVentanas;
+
 
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.awt.BorderLayout;
 
 /*
  * To change this template, choose Tools | Templates
@@ -44,6 +47,7 @@ public class Registrar extends javax.swing.JFrame {
             }
         });
     }
+        
     public void cerrar(){
         IniciarSesion.registroAbierto=false;
         this.dispose();
@@ -96,11 +100,11 @@ public class Registrar extends javax.swing.JFrame {
 
         jLabel5.setText("Email: ");
 
-        txtNombre.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtNombre.setHorizontalAlignment(javax.swing.JTextField.LEFT);
 
-        txtNacimiento.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtNacimiento.setHorizontalAlignment(javax.swing.JTextField.LEFT);
 
-        txtEmail.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtEmail.setHorizontalAlignment(javax.swing.JTextField.LEFT);
 
         jLabel6.setText("Fecha de Creación: ");
 
@@ -109,13 +113,13 @@ public class Registrar extends javax.swing.JFrame {
 
         jLabel7.setText("Teléfono: ");
 
-        txtTelefono.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtTelefono.setHorizontalAlignment(javax.swing.JTextField.LEFT);
 
         cmbGenero.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "M (Masculino)", "F (Femenino)" }));
 
         jLabel8.setText("Estatus: ");
 
-        txtEstatus.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtEstatus.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         txtEstatus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtEstatusActionPerformed(evt);

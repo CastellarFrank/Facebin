@@ -1,3 +1,5 @@
+package ClasesVentanas;
+
 
 import java.awt.Toolkit;
 import javax.swing.JFrame;
