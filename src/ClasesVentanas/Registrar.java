@@ -1,12 +1,15 @@
 package ClasesVentanas;
 
 
+import Adornos.panelRegistro;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
 
 /*
  * To change this template, choose Tools | Templates
@@ -24,6 +27,7 @@ import java.awt.BorderLayout;
  * @author NIGHTMARE
  */
 public class Registrar extends javax.swing.JFrame {
+    
     java.awt.Dimension pantallaTamaño=Toolkit.getDefaultToolkit().getScreenSize();
     Date fechaActual=new Date();
     SimpleDateFormat formato=new SimpleDateFormat("dd/MM/yyyy");
@@ -33,25 +37,37 @@ public class Registrar extends javax.swing.JFrame {
     public Registrar(String t){
         initComponents();
         this.setTitle(t);
-        this.setSize(400, 600);
-        this.setLocation(((pantallaTamaño.width/2)+100),((pantallaTamaño.height/2)-300));
+        this.setSize(400, 570);
+        definirPosicionDerecha();
         this.setResizable(false);
         fechaReg=formato.format(fechaActual);
         this.txtCreacion.setText(fechaReg);
-        
+        formWindowsOpened(null);
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
                 cerrar();
+                ControlVentanas.inicio.enable(true);
                 ControlVentanas.inicio.definirPosicionCentral();
+                ControlVentanas.inicio.toFront();
             }
         });
+    }
+    public void formWindowsOpened(WindowEvent ev){
+        panelRegistro p=new panelRegistro();
+        this.add( p , BorderLayout.CENTER);
+        p.repaint();
     }
         
     public void cerrar(){
         IniciarSesion.registroAbierto=false;
         this.dispose();
-        
+    }
+    public void definirPosicionCentral(){
+        this.setLocation((pantallaTamaño.width/2)-((this.getSize().width)/2),((pantallaTamaño.height/2)-(this.getSize().height)/2));
+    }
+    public void definirPosicionDerecha() {
+        this.setLocation(((pantallaTamaño.width/2)+100),((pantallaTamaño.height/2)-300));
     }
     
     
@@ -66,7 +82,6 @@ public class Registrar extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -86,11 +101,12 @@ public class Registrar extends javax.swing.JFrame {
         jCheckBox1 = new javax.swing.JCheckBox();
         jButton1 = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14));
-        jLabel1.setForeground(new java.awt.Color(51, 0, 0));
-        jLabel1.setText("Creación de Cuenta");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                formMouseEntered(evt);
+            }
+        });
 
         jLabel2.setText("Nombre de usuario: ");
 
@@ -116,6 +132,11 @@ public class Registrar extends javax.swing.JFrame {
         txtTelefono.setHorizontalAlignment(javax.swing.JTextField.LEFT);
 
         cmbGenero.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "M (Masculino)", "F (Femenino)" }));
+        cmbGenero.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                cmbGeneroMouseEntered(evt);
+            }
+        });
 
         jLabel8.setText("Estatus: ");
 
@@ -133,6 +154,11 @@ public class Registrar extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTextArea1);
 
         jCheckBox1.setText("Acepto los terminos y condiciones");
+        jCheckBox1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jCheckBox1MouseEntered(evt);
+            }
+        });
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox1ActionPerformed(evt);
@@ -140,6 +166,11 @@ public class Registrar extends javax.swing.JFrame {
         });
 
         jButton1.setText("Crear Cuenta");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jButton1MouseEntered(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -189,17 +220,11 @@ public class Registrar extends javax.swing.JFrame {
                             .addComponent(jCheckBox1))
                         .addGap(2, 2, 2)))
                 .addContainerGap(93, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(148, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(117, 117, 117))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(46, 46, 46)
-                .addComponent(jLabel1)
-                .addGap(38, 38, 38)
+                .addGap(101, 101, 101)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -248,6 +273,24 @@ public class Registrar extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jCheckBox1ActionPerformed
 
+    private void cmbGeneroMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cmbGeneroMouseEntered
+        this.setCursor(Cursor.HAND_CURSOR);
+    }//GEN-LAST:event_cmbGeneroMouseEntered
+
+    private void formMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseEntered
+        this.setCursor(null);
+        this.jButton1.setForeground(null);
+    }//GEN-LAST:event_formMouseEntered
+
+    private void jCheckBox1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jCheckBox1MouseEntered
+        this.setCursor(Cursor.HAND_CURSOR);
+    }//GEN-LAST:event_jCheckBox1MouseEntered
+
+    private void jButton1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseEntered
+        this.setCursor(Cursor.HAND_CURSOR);
+        this.jButton1.setForeground(Color.red);
+    }//GEN-LAST:event_jButton1MouseEntered
+
     /**
      * @param args the command line arguments
      */
@@ -266,7 +309,6 @@ public class Registrar extends javax.swing.JFrame {
     private javax.swing.JComboBox cmbGenero;
     private javax.swing.JButton jButton1;
     private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -283,4 +325,6 @@ public class Registrar extends javax.swing.JFrame {
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtTelefono;
     // End of variables declaration//GEN-END:variables
+
+    
 }

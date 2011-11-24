@@ -3,9 +3,11 @@ package ClasesVentanas;
 
 import Adornos.mipanel;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import javax.swing.JOptionPane;
 
@@ -37,6 +39,7 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
         this.setSize(500, 400);
         definirPosicionCentral();
         formWindowOpened(null);
+        
     }
     
     private void formWindowOpened(WindowEvent evt) {
@@ -65,11 +68,15 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
         txtCorreo = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 formMouseEntered(evt);
+            }
+        });
+        addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                formFocusGained(evt);
             }
         });
         addKeyListener(new java.awt.event.KeyAdapter() {
@@ -209,7 +216,9 @@ private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     if(registroAbierto==false){
         this.setLocation(((tamañoPantalla.width/2)-450),((tamañoPantalla.height/2)-200));
         ControlVentanas.registro.setVisible(true);
+        ControlVentanas.registro.definirPosicionDerecha();
         registroAbierto=true;
+        this.enable(false);
     }
     ControlVentanas.registro.toFront();
     
@@ -217,15 +226,21 @@ private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
 
 private void btnEntrarMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEntrarMouseEntered
     this.setCursor(Cursor.HAND_CURSOR);
+    this.btnEntrar.setForeground(Color.red);
 }//GEN-LAST:event_btnEntrarMouseEntered
 
 private void formMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseEntered
     this.setCursor(Cursor.DEFAULT_CURSOR);
+    this.btnEntrar.setForeground(null);
 }//GEN-LAST:event_formMouseEntered
 
 private void jLabel3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseEntered
     this.setCursor(Cursor.HAND_CURSOR);
 }//GEN-LAST:event_jLabel3MouseEntered
+
+private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
+
+}//GEN-LAST:event_formFocusGained
 
     /**
      * @param args the command line arguments
