@@ -1,5 +1,8 @@
 package ClasesVentanas;
 
+import java.io.IOException;
+import java.io.RandomAccessFile;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -18,6 +21,7 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     public static IniciarSesion inicio;
     static Registrar registro;
     static FaceMain face;
+    static RandomAccessFile registros=null;
     /** Creates new form ControlVentanas */
     public ControlVentanas() {
         initComponents();
@@ -51,14 +55,25 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
+    public static void crearRegistro(){
+        registro=new Registrar("Registrar una nueva cuenta"); 
+    }
+    public static void crearFace(){
+        face=new FaceMain("FACEBIN, Página Principal");
+    }
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
-
+            
+            
             @Override
-            public void run() {
-                registro=new Registrar("Registrar una nueva cuenta"); 
+            public void run(){
+                try{
+                    registros=new RandomAccessFile("registro.buenr","rw");
+                }catch(IOException e){
+                    System.out.println(e.getMessage());
+                }
+                 
                 inicio=new IniciarSesion();
-                face=new FaceMain("FACEBIN, Página Principal");
             }
         });
     }
