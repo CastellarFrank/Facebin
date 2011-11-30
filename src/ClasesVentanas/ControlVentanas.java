@@ -1,6 +1,7 @@
 package ClasesVentanas;
 
-import java.io.IOException;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 
 /*
@@ -18,8 +19,10 @@ import java.io.RandomAccessFile;
  * @author NIGHTMARE
  */
 public abstract class ControlVentanas extends javax.swing.JFrame {
-    public static IniciarSesion inicio;
+    
+    static IniciarSesion inicio;
     static Registrar registro;
+    static File file=null;
     static FaceMain face;
     static RandomAccessFile registros=null;
     /** Creates new form ControlVentanas */
@@ -55,6 +58,38 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
+    public static void configFile(String path){
+        file=new File(path);
+    }
+    
+    public static void crearFolderUser(String correo){
+        configFile("Cuentas/"+correo);
+        file.mkdir();
+    }
+    
+    public static void crearArchivoManageFriends(String correo){
+        configFile("Cuentas/"+correo+"/manageFriends.fbn");
+        crearFile();
+    }
+    public static void configArchivoGerencia(){
+        configFile("Cuentas/gerencia.fbn");
+    }
+    public static void crearArchivoPerfil(String correo){
+        configFile("Cuentas/"+correo+"/profile.fbn");
+        crearFile();
+    }
+    public static void crearRandom() throws FileNotFoundException{
+        registros= new RandomAccessFile(file,"rw");
+    }
+    public static void crearFile(){
+        try{            
+            file.createNewFile();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
     public static void crearRegistro(){
         registro=new Registrar("Registrar una nueva cuenta"); 
     }
@@ -66,14 +101,12 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
             
             
             @Override
-            public void run(){
-                try{
-                    registros=new RandomAccessFile("registro.buenr","rw");
-                }catch(IOException e){
-                    System.out.println(e.getMessage());
-                }
-                 
+            public void run(){                 
                 inicio=new IniciarSesion();
+                configFile("Cuentas");
+                file.mkdir();
+                configArchivoGerencia();
+                crearFile();
             }
         });
     }
