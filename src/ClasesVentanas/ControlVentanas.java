@@ -1,7 +1,6 @@
 package ClasesVentanas;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
 
 /*
@@ -22,8 +21,8 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     
     static IniciarSesion inicio;
     static Registrar registro;
-    static File file=null;
     static FaceMain face;
+    static File file=null;
     static RandomAccessFile registros=null;
     /** Creates new form ControlVentanas */
     public ControlVentanas() {
@@ -61,7 +60,9 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     public static void configFile(String path){
         file=new File(path);
     }
-    
+    public static void configArchivoEstados(){
+        configFile("Principal/estados.fbn");
+    }
     public static void crearFolderUser(String correo){
         configFile("Cuentas/"+correo);
         file.mkdir();
@@ -72,41 +73,57 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
         crearFile();
     }
     public static void configArchivoGerencia(){
-        configFile("Cuentas/gerencia.fbn");
+        configFile("Principal/gerencia.fbn");
     }
-    public static void crearArchivoPerfil(String correo){
+    public static void configArchivoPerfil(String correo){
         configFile("Cuentas/"+correo+"/profile.fbn");
-        crearFile();
     }
-    public static void crearRandom() throws FileNotFoundException{
-        registros= new RandomAccessFile(file,"rw");
+    public static void crearRandom(){
+        try{
+            registros= new RandomAccessFile(file,"rw");
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
     }
     public static void crearFile(){
-        try{            
+        try{  
             file.createNewFile();
         }catch(Exception e){
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }
-    
+    public static void crearInicio(){
+        inicio=new IniciarSesion();
+    }
+    public static void crearInicio(String correo){
+        inicio=new IniciarSesion(correo);
+    }
     public static void crearRegistro(){
         registro=new Registrar("Registrar una nueva cuenta"); 
     }
-    public static void crearFace(){
-        face=new FaceMain("FACEBIN, Página Principal");
+    public static void crearFace(String correo){
+        face=new FaceMain("FACEBIN, Página Principal",correo);
+    }
+    public static void crearFacePerfil(String correo,String user){
+        face=new FaceMain("FACEBIN, Perfíl",correo,user);
     }
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             
             
             @Override
-            public void run(){                 
+            public void run(){
+                crearRegistro();
                 inicio=new IniciarSesion();
                 configFile("Cuentas");
                 file.mkdir();
+                configFile("Principal");
+                file.mkdir();
                 configArchivoGerencia();
                 crearFile();
+                
             }
         });
     }

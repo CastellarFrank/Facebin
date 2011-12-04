@@ -12,6 +12,8 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /*
@@ -41,21 +43,7 @@ public class Registrar extends javax.swing.JFrame {
     /** Creates new form Registrar */
     public Registrar(String t){
         initComponents();
-        try{
-            
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-        this.setVisible(true);
         this.setTitle(t);
-        this.setSize(400, 570);
-        this.txtTelefono.setValue(new Integer(0));
-        definirPosicionDerecha();
-        this.setResizable(false);        
-        fechaReg=formato.format(fechaActual);
-        this.txtCreacion.setText(fechaReg);
-        formWindowsOpened(null);
-        configItems();
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
@@ -63,7 +51,17 @@ public class Registrar extends javax.swing.JFrame {
             }
         });
     }
-    
+    public void abrir(){        
+        formWindowsOpened(null);
+        this.setSize(400, 570);
+        configItems();
+        this.txtTelefono.setValue(new Integer(0));
+        definirPosicionDerecha();
+        this.setResizable(false);        
+        fechaReg=formato.format(fechaActual);
+        this.txtCreacion.setText(fechaReg);
+        this.setVisible(true);
+    }    
     public void formWindowsOpened(WindowEvent ev){
         panelRegistro p=new panelRegistro();
         this.add( p , BorderLayout.CENTER);
@@ -167,20 +165,22 @@ public class Registrar extends javax.swing.JFrame {
         ControlVentanas.registros.writeUTF(correo);
         ControlVentanas.registros.writeUTF(this.txtContraseña.getText());
         ControlVentanas.registros.writeBoolean(true);
+        ControlVentanas.registros.writeUTF("src/Adornos/user.png");
     }
     private void crearNuevoPerfil(String correo) throws Exception{
-        ControlVentanas.crearArchivoPerfil(correo);
+        ControlVentanas.configArchivoPerfil(correo);
+        ControlVentanas.crearFile();
         ControlVentanas.crearRandom();
         ControlVentanas.registros.writeUTF(this.txtNombre.getText());
         ControlVentanas.registros.writeChar(((String)this.cmbGenero.getSelectedItem()).charAt(0));
         Calendar fechaNacimiento=Calendar.getInstance();
-        fechaNacimiento.set((int)this.cmbAño.getSelectedItem(), this.cmbMes.getSelectedIndex(), (int)this.cmbDia.getSelectedItem());
+        fechaNacimiento.set((int)this.cmbAño.getSelectedItem(), this.cmbMes.getSelectedIndex()-1, (int)this.cmbDia.getSelectedItem());
         ControlVentanas.registros.writeLong(fechaNacimiento.getTimeInMillis());
         ControlVentanas.registros.writeUTF(this.txtEmail.getText());
         ControlVentanas.registros.writeLong(fechaActual.getTime());
         ControlVentanas.registros.writeInt(Integer.valueOf(this.txtTelefono.getText()));
         if(!this.txtEstatus.getText().equals(""))
-            agregarStatus(txtEstatus.getText());
+            agregarStatus(txtEstatus.getText(),this.txtEmail.getText(),this.txtNombre.getText());
     }
     public boolean correoExiste(String correo){
         ControlVentanas.configFile("Cuentas/"+correo);
@@ -529,11 +529,56 @@ public class Registrar extends javax.swing.JFrame {
     private javax.swing.JFormattedTextField txtTelefono;
     // End of variables declaration//GEN-END:variables
 
-    private void agregarStatus(String Estatus) throws IOException{
-        ControlVentanas.registros.seek(ControlVentanas.registros.length());
-        Date fechaAhorita=new Date();
-        ControlVentanas.registros.writeUTF(Estatus);
-        ControlVentanas.registros.writeLong(fechaAhorita.getTime());        
+    public void agregarStatus(String Estatus,String correo,String nombre){
+        try {
+            SimpleDateFormat formato=new SimpleDateFormat();
+            ControlVentanas.configArchivoEstados();
+            ControlVentanas.crearRandom();
+            ControlVentanas.registros.seek(ControlVentanas.registros.length());
+            Date fechaAhorita=new Date();
+            ControlVentanas.registros.writeUTF(correo);
+            ControlVentanas.registros.writeUTF(nombre);
+            ControlVentanas.registros.writeUTF(Estatus);
+            ControlVentanas.registros.writeUTF(formato.format(fechaAhorita));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
-
+    public String getPathImagen(String correo){
+        ControlVentanas.configArchivoGerencia();
+        ControlVentanas.crearRandom();
+       try {
+            ControlVentanas.registros.seek(0);
+            while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
+                String c=ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.readBoolean();
+                String p=ControlVentanas.registros.readUTF();
+                if(c.equals(correo))
+                    return p;
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return "";
+    }
+    public long buscarArchivoGerencial(String correo){
+        ControlVentanas.configArchivoGerencia();
+        ControlVentanas.crearRandom();
+        try {
+            ControlVentanas.registros.seek(0);
+            while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
+                long puntero=ControlVentanas.registros.getFilePointer();
+                String c=ControlVentanas.registros.readUTF();
+                if(c.equals(correo))
+                    return puntero;
+                ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.readBoolean();
+                ControlVentanas.registros.readUTF();                
+            }
+        }catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return -1;
+    }
 }

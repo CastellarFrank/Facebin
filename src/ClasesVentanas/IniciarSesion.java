@@ -26,10 +26,21 @@ import javax.swing.JOptionPane;
  * @author NIGHTMARE
  */
 public class IniciarSesion extends javax.swing.JFrame {
-    
-static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenSize();
+    String email;
+    static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenSize();
     /** Creates new form IniciarSesion */
-
+    
+    public IniciarSesion(String correo){
+        initComponents();
+        this.setTitle("FACEBIN");
+        this.setResizable(false);
+        this.setVisible(true);
+        this.setSize(500, 400);
+        definirPosicionCentral();
+        formWindowOpened(null);
+        this.txtCorreo.setText(correo);
+        this.txtContraseña.requestFocus();
+    }
     public IniciarSesion(){
         initComponents();
         this.setTitle("FACEBIN");
@@ -50,7 +61,7 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
         this.setLocation(((tamañoPantalla.width/2)-(250)),((tamañoPantalla.height/2)-200));
     }
     public boolean buscarRegistro(){
-        String email,contra;
+        String contra;
         try{
             ControlVentanas.configArchivoGerencia();
             ControlVentanas.crearRandom();
@@ -58,10 +69,11 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
             while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
                 email=ControlVentanas.registros.readUTF();
                 contra=ControlVentanas.registros.readUTF();
-                if(email.equals(this.txtCorreo.getText())&&contra.equals(this.txtContraseña.getText())){
+                boolean b=ControlVentanas.registros.readBoolean();
+                if(email.equals(this.txtCorreo.getText())&&contra.equals(this.txtContraseña.getText())&&b){
                     return true;
                 }
-                ControlVentanas.registros.readBoolean();
+                ControlVentanas.registros.readUTF();
             }
         }catch(Exception e){
             System.out.println(e.getMessage());
@@ -148,6 +160,11 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
                 btnEntrarMouseEntered(evt);
             }
         });
+        btnEntrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEntrarActionPerformed(evt);
+            }
+        });
         btnEntrar.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 btnEntrarFocusGained(evt);
@@ -206,25 +223,26 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(132, 132, 132)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(txtCorreo, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtCorreo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtContraseña, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(55, 55, 55))))
+                        .addGap(55, 55, 55)))
+                .addGap(143, 143, 143))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(117, 117, 117)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(3, 3, 3)
                         .addComponent(jLabel1))
@@ -248,7 +266,7 @@ static java.awt.Dimension tamañoPantalla=Toolkit.getDefaultToolkit().getScreenS
     private void btnEntrarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEntrarMouseClicked
         
         if(this.buscarRegistro()){
-            ControlVentanas.crearFace();
+            ControlVentanas.crearFace(email);
             this.dispose();
         }else{
             JOptionPane.showMessageDialog(null, "EL correo o la contraseña ingresadas son incorrectos","Datos Incorrectos",
@@ -283,7 +301,8 @@ private void txtContraseñaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:
 
 private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseClicked
         this.setLocation(((tamañoPantalla.width/2)-450),((tamañoPantalla.height/2)-200));
-        ControlVentanas.crearRegistro();
+        ControlVentanas.crearRegistro();        
+        ControlVentanas.registro.abrir();
         this.txtContraseña.setText("");
         this.setEnabled(false);
         ControlVentanas.registro.toFront();
@@ -317,7 +336,7 @@ private void txtCorreoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
 }//GEN-LAST:event_txtCorreoActionPerformed
 
 private void txtCorreoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCorreoFocusGained
-    
+
 }//GEN-LAST:event_txtCorreoFocusGained
 
 private void txtContraseñaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtContraseñaFocusGained
@@ -337,6 +356,10 @@ private void formWindowLostFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:ev
 
 private void formWindowDeactivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowDeactivated
 }//GEN-LAST:event_formWindowDeactivated
+
+private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
+    // TODO add your handling code here:
+}//GEN-LAST:event_btnEntrarActionPerformed
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
