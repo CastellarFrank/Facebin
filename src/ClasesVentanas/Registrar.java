@@ -10,10 +10,9 @@ import java.util.Date;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /*
@@ -105,8 +104,8 @@ public class Registrar extends javax.swing.JFrame {
      if(cmbMes.getSelectedIndex()==0 || cmbMes.getSelectedIndex()==2 || cmbMes.getSelectedIndex()==4 || cmbMes.getSelectedIndex()==6 || cmbMes.getSelectedIndex()==7 || 
              cmbMes.getSelectedIndex()==9 || cmbMes.getSelectedIndex()==11){
         maximo=31;
-     }else if(cmbMes.getSelectedIndex()==1){
-         if (((int)(cmbAño.getSelectedItem()) % 4 == 0) && (((int)(cmbAño.getSelectedItem()) % 100 != 0) || ((int)(cmbAño.getSelectedItem()) % 400 == 0)))
+     }else if(cmbMes.getSelectedIndex()==1){ 
+         if ((((Integer)cmbAño.getSelectedItem()) % 4 == 0) && ((((Integer)cmbAño.getSelectedItem()) % 100 != 0) || (((Integer)cmbAño.getSelectedItem()) % 400 == 0)))
              maximo=29;
          else
             maximo=28;
@@ -165,7 +164,6 @@ public class Registrar extends javax.swing.JFrame {
         ControlVentanas.registros.writeUTF(correo);
         ControlVentanas.registros.writeUTF(this.txtContraseña.getText());
         ControlVentanas.registros.writeBoolean(true);
-        ControlVentanas.registros.writeUTF("src/Adornos/user.png");
     }
     private void crearNuevoPerfil(String correo) throws Exception{
         ControlVentanas.configArchivoPerfil(correo);
@@ -174,11 +172,12 @@ public class Registrar extends javax.swing.JFrame {
         ControlVentanas.registros.writeUTF(this.txtNombre.getText());
         ControlVentanas.registros.writeChar(((String)this.cmbGenero.getSelectedItem()).charAt(0));
         Calendar fechaNacimiento=Calendar.getInstance();
-        fechaNacimiento.set((int)this.cmbAño.getSelectedItem(), this.cmbMes.getSelectedIndex()-1, (int)this.cmbDia.getSelectedItem());
+        fechaNacimiento.set((Integer)this.cmbAño.getSelectedItem(), this.cmbMes.getSelectedIndex()-1, (Integer)this.cmbDia.getSelectedItem());
         ControlVentanas.registros.writeLong(fechaNacimiento.getTimeInMillis());
         ControlVentanas.registros.writeUTF(this.txtEmail.getText());
         ControlVentanas.registros.writeLong(fechaActual.getTime());
         ControlVentanas.registros.writeInt(Integer.valueOf(this.txtTelefono.getText()));
+        ControlVentanas.registros.writeUTF("src/Adornos/user.png");
         if(!this.txtEstatus.getText().equals(""))
             agregarStatus(txtEstatus.getText(),this.txtEmail.getText(),this.txtNombre.getText());
     }
@@ -283,6 +282,11 @@ public class Registrar extends javax.swing.JFrame {
                 jCheckBox1ActionPerformed(evt);
             }
         });
+        jCheckBox1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jCheckBox1KeyPressed(evt);
+            }
+        });
 
         jButton1.setText("Crear Cuenta");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -291,6 +295,11 @@ public class Registrar extends javax.swing.JFrame {
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 jButton1MouseEntered(evt);
+            }
+        });
+        jButton1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jButton1KeyPressed(evt);
             }
         });
 
@@ -501,6 +510,22 @@ public class Registrar extends javax.swing.JFrame {
         this.txtTelefono.selectAll();
     }//GEN-LAST:event_txtTelefonoFocusGained
 
+    private void jCheckBox1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jCheckBox1KeyPressed
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER){
+            if(this.jCheckBox1.isSelected()){
+                this.jCheckBox1.setSelected(false);
+            }else{
+                this.jCheckBox1.setSelected(true);
+            }
+        }
+    }//GEN-LAST:event_jCheckBox1KeyPressed
+
+    private void jButton1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton1KeyPressed
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER){
+            this.jButton1MouseClicked(null);
+        }
+    }//GEN-LAST:event_jButton1KeyPressed
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox cmbAño;
@@ -545,40 +570,21 @@ public class Registrar extends javax.swing.JFrame {
         }
     }
     public String getPathImagen(String correo){
-        ControlVentanas.configArchivoGerencia();
+        ControlVentanas.configArchivoPerfil(correo);
         ControlVentanas.crearRandom();
        try {
             ControlVentanas.registros.seek(0);
-            while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
-                String c=ControlVentanas.registros.readUTF();
-                ControlVentanas.registros.readUTF();
-                ControlVentanas.registros.readBoolean();
-                String p=ControlVentanas.registros.readUTF();
-                if(c.equals(correo))
-                    return p;
-            }
+            ControlVentanas.registros.readUTF();
+            ControlVentanas.registros.readChar();
+            ControlVentanas.registros.readLong();
+            String c=ControlVentanas.registros.readUTF();
+            ControlVentanas.registros.readLong();
+            ControlVentanas.registros.readInt();
+            String p=ControlVentanas.registros.readUTF();
+            return p;
         } catch (IOException ex) {
             ex.printStackTrace();
         }
         return "";
-    }
-    public long buscarArchivoGerencial(String correo){
-        ControlVentanas.configArchivoGerencia();
-        ControlVentanas.crearRandom();
-        try {
-            ControlVentanas.registros.seek(0);
-            while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
-                long puntero=ControlVentanas.registros.getFilePointer();
-                String c=ControlVentanas.registros.readUTF();
-                if(c.equals(correo))
-                    return puntero;
-                ControlVentanas.registros.readUTF();
-                ControlVentanas.registros.readBoolean();
-                ControlVentanas.registros.readUTF();                
-            }
-        }catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        return -1;
     }
 }

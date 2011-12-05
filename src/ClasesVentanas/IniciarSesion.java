@@ -70,10 +70,9 @@ public class IniciarSesion extends javax.swing.JFrame {
                 email=ControlVentanas.registros.readUTF();
                 contra=ControlVentanas.registros.readUTF();
                 boolean b=ControlVentanas.registros.readBoolean();
-                if(email.equals(this.txtCorreo.getText())&&contra.equals(this.txtContraseña.getText())&&b){
+                if(email.equals(this.txtCorreo.getText()) && contra.equals(this.txtContraseña.getText())&&b){
                     return true;
                 }
-                ControlVentanas.registros.readUTF();
             }
         }catch(Exception e){
             System.out.println(e.getMessage());

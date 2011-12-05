@@ -4,6 +4,7 @@ package ClasesVentanas;
 
 import Adornos.panelFondoPrincipal;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -147,7 +148,6 @@ public class FaceMain extends javax.swing.JFrame {
             ControlVentanas.crearRandom();
             ControlVentanas.registros.seek(0);
             n=ControlVentanas.registros.readUTF();
-            
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -218,7 +218,7 @@ public class FaceMain extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14));
         jLabel1.setText("Actualizar su estado: ");
         getContentPane().add(jLabel1);
-        jLabel1.setBounds(430, 150, 190, 20);
+        jLabel1.setBounds(400, 140, 190, 20);
 
         txtIngresarEstado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -301,7 +301,7 @@ public class FaceMain extends javax.swing.JFrame {
         jLabel5.setBounds(130, 310, 74, 16);
 
         jLabel6.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
-        jLabel6.setText("Solicitudes");
+        jLabel6.setText("Ver Solicitudes");
         jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabel6MouseClicked(evt);
@@ -314,8 +314,11 @@ public class FaceMain extends javax.swing.JFrame {
         jLabel6.setBounds(130, 330, 160, 16);
 
         jLabel7.setFont(new java.awt.Font("Verdana", 1, 12));
-        jLabel7.setText("Buscar amigos");
+        jLabel7.setText("Buscar Amigos");
         jLabel7.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel7MouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 jLabel7MouseEntered(evt);
             }
@@ -324,7 +327,7 @@ public class FaceMain extends javax.swing.JFrame {
         jLabel7.setBounds(130, 350, 160, 16);
 
         jLabel8.setFont(new java.awt.Font("Verdana", 1, 12));
-        jLabel8.setText("Mofificar perfil");
+        jLabel8.setText("Mofificar Perfil");
         jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 jLabel8MouseEntered(evt);
@@ -348,10 +351,22 @@ public class FaceMain extends javax.swing.JFrame {
 
     private void jLabel2MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseEntered
         this.setCursor(Cursor.HAND_CURSOR);
+        this.jLabel2.setForeground(Color.red);
     }//GEN-LAST:event_jLabel2MouseEntered
 
     private void formMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseEntered
         this.setCursor(null);
+        this.jLabel2.setForeground(Color.BLACK);
+        this.jLabel3.setForeground(Color.BLACK);
+        this.jLabel4.setForeground(Color.BLACK);
+        this.jLabel5.setForeground(Color.BLACK);
+        this.jLabel6.setForeground(Color.BLACK);
+        this.jLabel7.setForeground(Color.BLACK);
+        this.jLabel8.setForeground(Color.BLACK);
+        
+        
+        
+        
     }//GEN-LAST:event_formMouseEntered
 
     private void btnInsertarEstadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInsertarEstadoMouseClicked
@@ -379,10 +394,12 @@ public class FaceMain extends javax.swing.JFrame {
 
     private void jLabel3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel3MouseEntered
         this.setCursor(Cursor.HAND_CURSOR);
+        this.jLabel3.setForeground(Color.red);
     }//GEN-LAST:event_jLabel3MouseEntered
 
     private void jLabel4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseEntered
         this.setCursor(Cursor.HAND_CURSOR);
+        this.jLabel4.setForeground(Color.red);
     }//GEN-LAST:event_jLabel4MouseEntered
 
     private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
@@ -426,19 +443,27 @@ public class FaceMain extends javax.swing.JFrame {
 
     private void jLabel7MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseEntered
         this.setCursor(Cursor.HAND_CURSOR);
+        this.jLabel7.setForeground(Color.red);
     }//GEN-LAST:event_jLabel7MouseEntered
 
     private void jLabel6MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseEntered
         this.setCursor(Cursor.HAND_CURSOR);
+        this.jLabel6.setForeground(Color.red);
     }//GEN-LAST:event_jLabel6MouseEntered
 
     private void jLabel8MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseEntered
         this.setCursor(Cursor.HAND_CURSOR);
+        this.jLabel8.setForeground(Color.red);
     }//GEN-LAST:event_jLabel8MouseEntered
 
     private void jLabel5MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseEntered
         this.setCursor(Cursor.HAND_CURSOR);
+        this.jLabel5.setForeground(Color.red);
     }//GEN-LAST:event_jLabel5MouseEntered
+
+    private void jLabel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseClicked
+        ControlVentanas.abrirBusqueda();
+    }//GEN-LAST:event_jLabel7MouseClicked
 
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -469,7 +494,7 @@ public class FaceMain extends javax.swing.JFrame {
     private void colocarImagenPerfil(String path){
         ImageIcon imagen=new ImageIcon(path);
         ImageIcon foto=new ImageIcon(imagen.getImage().getScaledInstance(this.lblImagenPerfil.getWidth(), this.lblImagenPerfil.getHeight(), Image.SCALE_DEFAULT));        
-        this.lblImagenPerfil.setIcon(foto);  
+        this.lblImagenPerfil.setIcon(foto);
     }
     public void publicarEstadosPrincipales(boolean lim){
         try {
@@ -508,11 +533,17 @@ public class FaceMain extends javax.swing.JFrame {
     }
 
     private void guardarPathImagenPerfil(String path) {
-        ControlVentanas.registro.buscarArchivoGerencial(this.usuarioLogueado);
-        try {
+        ControlVentanas.configArchivoPerfil(this.usuarioLogueado);
+        ControlVentanas.crearRandom();
+       try {
+            ControlVentanas.registros.seek(0);
             ControlVentanas.registros.readUTF();
-            ControlVentanas.registros.readBoolean();
-            ControlVentanas.registros.writeUTF(path);
+            ControlVentanas.registros.readChar();
+            ControlVentanas.registros.readLong();
+            ControlVentanas.registros.readUTF();
+            ControlVentanas.registros.readLong();
+            ControlVentanas.registros.readInt();
+            ControlVentanas.registros.writeUTF(path);                             
         } catch (IOException ex) {
             ex.printStackTrace();
         }

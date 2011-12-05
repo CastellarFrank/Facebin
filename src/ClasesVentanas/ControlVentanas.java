@@ -23,6 +23,7 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     static Registrar registro;
     static FaceMain face;
     static File file=null;
+    static BuscarAmigos busqueda=null;
     static RandomAccessFile registros=null;
     /** Creates new form ControlVentanas */
     public ControlVentanas() {
@@ -108,6 +109,9 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     }
     public static void crearFacePerfil(String correo,String user){
         face=new FaceMain("FACEBIN, Perfíl",correo,user);
+    }
+    public static void abrirBusqueda(){
+        busqueda=new BuscarAmigos();
     }
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
