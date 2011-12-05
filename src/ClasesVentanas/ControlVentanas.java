@@ -1,6 +1,6 @@
 package ClasesVentanas;
 
-import java.io.IOException;
+import java.io.File;
 import java.io.RandomAccessFile;
 
 /*
@@ -18,9 +18,12 @@ import java.io.RandomAccessFile;
  * @author NIGHTMARE
  */
 public abstract class ControlVentanas extends javax.swing.JFrame {
-    public static IniciarSesion inicio;
+    
+    static IniciarSesion inicio;
     static Registrar registro;
     static FaceMain face;
+    static File file=null;
+    static BuscarAmigos busqueda=null;
     static RandomAccessFile registros=null;
     /** Creates new form ControlVentanas */
     public ControlVentanas() {
@@ -55,11 +58,63 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
+    public static void configFile(String path){
+        file=new File(path);
+    }
+    public static void configArchivoEstados(){
+        configFile("Principal/estados.fbn");
+    }
+    public static void crearFolderUser(String correo){
+        configFile("Cuentas/"+correo);
+        file.mkdir();
+    }
+    
+    public static void crearArchivoManageFriends(String correo){
+        configFile("Cuentas/"+correo+"/manageFriends.fbn");
+        crearFile();
+    }
+    public static void configArchivoGerencia(){
+        configFile("Principal/gerencia.fbn");
+    }
+    public static void configArchivoPerfil(String correo){
+        configFile("Cuentas/"+correo+"/profile.fbn");
+    }
+    public static void configArchivoAmigos(String correo){
+        configFile("Cuentas/"+correo+"/manageFriends.fbn");
+    }
+    public static void crearRandom(){
+        try{
+            registros= new RandomAccessFile(file,"rw");
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    public static void crearFile(){
+        try{  
+            file.createNewFile();
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    public static void crearInicio(){
+        inicio=new IniciarSesion();
+    }
+    public static void crearInicio(String correo){
+        inicio=new IniciarSesion(correo);
+    }
     public static void crearRegistro(){
         registro=new Registrar("Registrar una nueva cuenta"); 
     }
-    public static void crearFace(){
-        face=new FaceMain("FACEBIN, Página Principal");
+    public static void crearFace(String correo){
+        face=new FaceMain("FACEBIN, Página Principal",correo);
+    }
+    public static void crearFacePerfil(String correo,String user){
+        face=new FaceMain("FACEBIN, Perfíl",correo,user);
+    }
+    public static void abrirBusqueda(String correo){
+        busqueda=new BuscarAmigos(correo);
     }
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -67,13 +122,15 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
             
             @Override
             public void run(){
-                try{
-                    registros=new RandomAccessFile("registro.buenr","rw");
-                }catch(IOException e){
-                    System.out.println(e.getMessage());
-                }
-                 
+                crearRegistro();
                 inicio=new IniciarSesion();
+                configFile("Cuentas");
+                file.mkdir();
+                configFile("Principal");
+                file.mkdir();
+                configArchivoGerencia();
+                crearFile();
+                
             }
         });
     }

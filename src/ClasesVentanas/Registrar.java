@@ -10,10 +10,11 @@ import java.util.Date;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.Frame;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /*
@@ -43,20 +44,7 @@ public class Registrar extends javax.swing.JFrame {
     /** Creates new form Registrar */
     public Registrar(String t){
         initComponents();
-        this.setVisible(true);
-        try{
-            
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-        }
         this.setTitle(t);
-        this.setSize(400, 570);
-        definirPosicionDerecha();
-        this.setResizable(false);
-        fechaReg=formato.format(fechaActual);
-        this.txtCreacion.setText(fechaReg);
-        formWindowsOpened(null);
-        configItems();
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent we) {
@@ -64,7 +52,17 @@ public class Registrar extends javax.swing.JFrame {
             }
         });
     }
-    
+    public void abrir(){        
+        formWindowsOpened(null);
+        this.setSize(400, 570);
+        configItems();
+        this.txtTelefono.setValue(new Integer(0));
+        definirPosicionDerecha();
+        this.setResizable(false);        
+        fechaReg=formato.format(fechaActual);
+        this.txtCreacion.setText(fechaReg);
+        this.setVisible(true);
+    }    
     public void formWindowsOpened(WindowEvent ev){
         panelRegistro p=new panelRegistro();
         this.add( p , BorderLayout.CENTER);
@@ -72,12 +70,8 @@ public class Registrar extends javax.swing.JFrame {
     }
     public void cerrarVentana(){
         this.dispose();
-        ControlVentanas.inicio.enable(true);
-        ControlVentanas.inicio.definirPosicionCentral();
+        ControlVentanas.inicio.regresarRegistro();
         ControlVentanas.inicio.toFront();
-        ControlVentanas.inicio.setAlwaysOnTop(true);
-        if(!ControlVentanas.inicio.isFocusOwner())
-            ControlVentanas.inicio.toFront();
     }
         
     public void definirPosicionCentral(){
@@ -112,8 +106,8 @@ public class Registrar extends javax.swing.JFrame {
      if(cmbMes.getSelectedIndex()==0 || cmbMes.getSelectedIndex()==2 || cmbMes.getSelectedIndex()==4 || cmbMes.getSelectedIndex()==6 || cmbMes.getSelectedIndex()==7 || 
              cmbMes.getSelectedIndex()==9 || cmbMes.getSelectedIndex()==11){
         maximo=31;
-     }else if(cmbMes.getSelectedIndex()==1){
-         if (((int)(cmbAño.getSelectedItem()) % 4 == 0) && (((int)(cmbAño.getSelectedItem()) % 100 != 0) || ((int)(cmbAño.getSelectedItem()) % 400 == 0)))
+     }else if(cmbMes.getSelectedIndex()==1){ 
+         if ((((Integer)cmbAño.getSelectedItem()) % 4 == 0) && ((((Integer)cmbAño.getSelectedItem()) % 100 != 0) || (((Integer)cmbAño.getSelectedItem()) % 400 == 0)))
              maximo=29;
          else
             maximo=28;
@@ -135,17 +129,16 @@ public class Registrar extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Las contraseñas no coinciden", "Error Contraseña", JOptionPane.INFORMATION_MESSAGE);
             txtContraseña.requestFocus();
             txtContraseña.selectAll();
+            txtRepetirContraseña.setText("");
             return false;
         }else if(!this.jCheckBox1.isSelected()){
             JOptionPane.showMessageDialog(null, "Debe Aceptar los terminos y condiciones", "Terminos y Condiciones", JOptionPane.INFORMATION_MESSAGE);
-            txtContraseña.requestFocus();
-            txtContraseña.selectAll();
             return false;
         }
         return crearEntradaRegistro();
     }
     public boolean crearEntradaRegistro(){
-        if(correoExiste()){
+        if(correoExiste(this.txtEmail.getText())){
             JOptionPane.showMessageDialog(null, "Ya existe una cuenta con ese correo, que mal si olvidaste la contraseña","Correo ya existe",JOptionPane.INFORMATION_MESSAGE);
             this.txtContraseña.setText("");
             this.txtRepetirContraseña.setText("");
@@ -154,17 +147,10 @@ public class Registrar extends javax.swing.JFrame {
             return false;
         }            
         try{
-            ControlVentanas.registros.seek(ControlVentanas.registros.length());
-            ControlVentanas.registros.writeUTF(this.txtNombre.getText());
-            ControlVentanas.registros.writeUTF(this.txtEmail.getText());
-            ControlVentanas.registros.writeUTF(this.txtContraseña.getText());
-            ControlVentanas.registros.writeChar(((String)this.cmbGenero.getSelectedItem()).charAt(0));
-            ControlVentanas.registros.writeUTF((this.txtTelefono.getText().equals("")?" ":this.txtTelefono.getText()));
-            ControlVentanas.registros.writeUTF((this.txtEstatus.getText().equals("")?" ":this.txtTelefono.getText()));
-            Calendar fechaNacimiento=Calendar.getInstance();
-            fechaNacimiento.set((int)this.cmbAño.getSelectedItem(), this.cmbMes.getSelectedIndex(), (int)this.cmbDia.getSelectedItem());
-            ControlVentanas.registros.writeLong(fechaNacimiento.getTimeInMillis());
-            ControlVentanas.registros.writeLong(fechaActual.getTime());
+            String correo=this.txtEmail.getText();
+            ControlVentanas.crearFolderUser(correo);
+            crearNuevoPerfil(correo);
+            agregarRegistroGerencia(correo);          
             return true;
         }catch(Exception e){
             e.printStackTrace();
@@ -172,27 +158,35 @@ public class Registrar extends javax.swing.JFrame {
         }
         return false;
     }
-    public boolean correoExiste(){
-        try{
-            ControlVentanas.registros.seek(0);
-            while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
-                ControlVentanas.registros.readUTF();
-                String correo=ControlVentanas.registros.readUTF();
-                if(correo.equals(this.txtEmail.getText())){
-                    return true;
-                }
-                ControlVentanas.registros.readUTF();
-                ControlVentanas.registros.readChar();
-                ControlVentanas.registros.readUTF();
-                ControlVentanas.registros.readUTF();
-                ControlVentanas.registros.readLong();
-                ControlVentanas.registros.readLong();
-            }
-        }catch(IOException e){
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-        }
-        return false;
+    
+    private void agregarRegistroGerencia(String correo) throws Exception{
+        ControlVentanas.configArchivoGerencia();
+        ControlVentanas.crearRandom();
+        ControlVentanas.registros.seek(ControlVentanas.registros.length());
+        ControlVentanas.registros.writeUTF(correo);
+        ControlVentanas.registros.writeUTF(this.txtContraseña.getText());
+        ControlVentanas.registros.writeBoolean(true);
+    }
+    private void crearNuevoPerfil(String correo) throws Exception{
+        ControlVentanas.crearArchivoManageFriends(correo);
+        ControlVentanas.configArchivoPerfil(correo);
+        ControlVentanas.crearFile();
+        ControlVentanas.crearRandom();
+        ControlVentanas.registros.writeUTF(this.txtNombre.getText());
+        ControlVentanas.registros.writeChar(((String)this.cmbGenero.getSelectedItem()).charAt(0));
+        Calendar fechaNacimiento=Calendar.getInstance();
+        fechaNacimiento.set((Integer)this.cmbAño.getSelectedItem(), this.cmbMes.getSelectedIndex()-1, (Integer)this.cmbDia.getSelectedItem());
+        ControlVentanas.registros.writeLong(fechaNacimiento.getTimeInMillis());
+        ControlVentanas.registros.writeUTF(this.txtEmail.getText());
+        ControlVentanas.registros.writeLong(fechaActual.getTime());
+        ControlVentanas.registros.writeInt(Integer.valueOf(this.txtTelefono.getText()));
+        ControlVentanas.registros.writeUTF("src/Adornos/user.png");
+        if(!this.txtEstatus.getText().equals(""))
+            agregarStatus(txtEstatus.getText(),this.txtEmail.getText(),this.txtNombre.getText());
+    }
+    public boolean correoExiste(String correo){
+        ControlVentanas.configFile("Cuentas/"+correo);
+        return ControlVentanas.file.exists();
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -207,7 +201,6 @@ public class Registrar extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         txtCreacion = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        txtTelefono = new javax.swing.JTextField();
         cmbGenero = new javax.swing.JComboBox();
         jLabel8 = new javax.swing.JLabel();
         txtEstatus = new javax.swing.JTextField();
@@ -222,11 +215,19 @@ public class Registrar extends javax.swing.JFrame {
         txtContraseña = new javax.swing.JPasswordField();
         txtRepetirContraseña = new javax.swing.JPasswordField();
         jLabel9 = new javax.swing.JLabel();
+        txtTelefono = new javax.swing.JFormattedTextField();
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 formMouseEntered(evt);
+            }
+        });
+        addWindowFocusListener(new java.awt.event.WindowFocusListener() {
+            public void windowGainedFocus(java.awt.event.WindowEvent evt) {
+                formWindowGainedFocus(evt);
+            }
+            public void windowLostFocus(java.awt.event.WindowEvent evt) {
             }
         });
 
@@ -249,8 +250,6 @@ public class Registrar extends javax.swing.JFrame {
         txtCreacion.setFocusable(false);
 
         jLabel7.setText("Teléfono: ");
-
-        txtTelefono.setHorizontalAlignment(javax.swing.JTextField.LEFT);
 
         cmbGenero.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "M (Masculino)", "F (Femenino)" }));
         cmbGenero.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -286,6 +285,11 @@ public class Registrar extends javax.swing.JFrame {
                 jCheckBox1ActionPerformed(evt);
             }
         });
+        jCheckBox1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jCheckBox1KeyPressed(evt);
+            }
+        });
 
         jButton1.setText("Crear Cuenta");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -294,6 +298,11 @@ public class Registrar extends javax.swing.JFrame {
             }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 jButton1MouseEntered(evt);
+            }
+        });
+        jButton1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jButton1KeyPressed(evt);
             }
         });
 
@@ -322,6 +331,13 @@ public class Registrar extends javax.swing.JFrame {
         jLabel1.setText("*Contraseña:");
 
         jLabel9.setText("*Repetir contraseña: ");
+
+        txtTelefono.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#0"))));
+        txtTelefono.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtTelefonoFocusGained(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -365,8 +381,8 @@ public class Registrar extends javax.swing.JFrame {
                         .addComponent(txtEstatus, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel7)
-                        .addGap(14, 14, 14)
-                        .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabel9)
@@ -422,8 +438,8 @@ public class Registrar extends javax.swing.JFrame {
                     .addComponent(txtCreacion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
+                    .addComponent(jLabel7)
+                    .addComponent(txtTelefono, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
@@ -489,6 +505,30 @@ public class Registrar extends javax.swing.JFrame {
         configDias();
     }//GEN-LAST:event_cmbAñoItemStateChanged
 
+    private void formWindowGainedFocus(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowGainedFocus
+
+    }//GEN-LAST:event_formWindowGainedFocus
+
+    private void txtTelefonoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtTelefonoFocusGained
+        this.txtTelefono.selectAll();
+    }//GEN-LAST:event_txtTelefonoFocusGained
+
+    private void jCheckBox1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jCheckBox1KeyPressed
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER){
+            if(this.jCheckBox1.isSelected()){
+                this.jCheckBox1.setSelected(false);
+            }else{
+                this.jCheckBox1.setSelected(true);
+            }
+        }
+    }//GEN-LAST:event_jCheckBox1KeyPressed
+
+    private void jButton1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jButton1KeyPressed
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER){
+            this.jButton1MouseClicked(null);
+        }
+    }//GEN-LAST:event_jButton1KeyPressed
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox cmbAño;
@@ -514,8 +554,60 @@ public class Registrar extends javax.swing.JFrame {
     private javax.swing.JTextField txtEstatus;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JPasswordField txtRepetirContraseña;
-    private javax.swing.JTextField txtTelefono;
+    private javax.swing.JFormattedTextField txtTelefono;
     // End of variables declaration//GEN-END:variables
 
+    public void agregarStatus(String Estatus,String correo,String nombre){
+        try {
+            SimpleDateFormat formato=new SimpleDateFormat();
+            ControlVentanas.configArchivoEstados();
+            ControlVentanas.crearRandom();
+            ControlVentanas.registros.seek(ControlVentanas.registros.length());
+            Date fechaAhorita=new Date();
+            ControlVentanas.registros.writeUTF(correo);
+            ControlVentanas.registros.writeUTF(nombre);
+            ControlVentanas.registros.writeUTF(Estatus);
+            ControlVentanas.registros.writeUTF(formato.format(fechaAhorita));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    public String getPathImagen(String correo){
+        ControlVentanas.configArchivoPerfil(correo);
+        ControlVentanas.crearRandom();
+       try {
+            ControlVentanas.registros.seek(0);
+            ControlVentanas.registros.readUTF();
+            ControlVentanas.registros.readChar();
+            ControlVentanas.registros.readLong();
+            String c=ControlVentanas.registros.readUTF();
+            ControlVentanas.registros.readLong();
+            ControlVentanas.registros.readInt();
+            String p=ControlVentanas.registros.readUTF();
+            return p;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return "";
+    }
+    public int contarAmigos(String correo){
+        ControlVentanas.configArchivoAmigos(correo);
+        ControlVentanas.crearRandom();
+        int cont=0;
+        try {
+            
+            ControlVentanas.registros.seek(0);
+            while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
+                ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.readBoolean();
+                ControlVentanas.registros.readBoolean();
+                cont++;
+            }
+            
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return cont;
+    }
     
 }
