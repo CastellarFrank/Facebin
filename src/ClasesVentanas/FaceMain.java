@@ -43,11 +43,16 @@ public class FaceMain extends javax.swing.JFrame {
     String estados="";
     String nombreUser="";
     boolean limite=false;
+    int cantAmigos=0;
+    String correoAmigos[];
     /** Creates new form FaceMain */
     public FaceMain(String t,String correo){
         initComponents();
+        cantAmigos=ControlVentanas.registro.contarAmigos(correo);
         usuarioLogueado=correo;
         nombreUser=this.getNombre(correo);
+        correoAmigos= new String[cantAmigos];
+        this.agregarCorreoAmigos(correo);
         configurarImagen();
         this.setTitle(t);        
         configurarFormPrincipal();
@@ -56,10 +61,13 @@ public class FaceMain extends javax.swing.JFrame {
     }
     public FaceMain(String t,String correo,String user){
         initComponents();
+        cantAmigos=ControlVentanas.registro.contarAmigos(correo);
         usuarioLogueado=correo;
         nombreUser=user;
         configurarImagen();
         limite=true;
+        correoAmigos= new String[cantAmigos];
+        this.agregarCorreoAmigos(correo);
         this.setTitle(t);
         this.configurarFormFace();
         configurarVentanaEstados();
@@ -281,13 +289,13 @@ public class FaceMain extends javax.swing.JFrame {
         getContentPane().add(btnInsertarEstado);
         btnInsertarEstado.setBounds(780, 170, 80, 23);
 
-        lblTitulo.setFont(new java.awt.Font("Celtic Garamond the 2nd", 1, 36)); // NOI18N
+        lblTitulo.setFont(new java.awt.Font("Celtic Garamond the 2nd", 1, 36));
         lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTitulo.setText("HOME FEED");
         getContentPane().add(lblTitulo);
         lblTitulo.setBounds(430, 70, 450, 40);
 
-        jLabel5.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Verdana", 1, 12));
         jLabel5.setText("Home Feed");
         jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -300,7 +308,7 @@ public class FaceMain extends javax.swing.JFrame {
         getContentPane().add(jLabel5);
         jLabel5.setBounds(130, 310, 74, 16);
 
-        jLabel6.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Verdana", 1, 12));
         jLabel6.setText("Ver Solicitudes");
         jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -462,7 +470,7 @@ public class FaceMain extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel5MouseEntered
 
     private void jLabel7MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseClicked
-        ControlVentanas.abrirBusqueda();
+        ControlVentanas.abrirBusqueda(this.usuarioLogueado);
     }//GEN-LAST:event_jLabel7MouseClicked
 
     
@@ -526,7 +534,7 @@ public class FaceMain extends javax.swing.JFrame {
                 estados+="("+f+")"+" "+n+" publicó: \n"+e+"\n----------------------------------------------------------------------------------------------\n";
             }
         }else{
-            if(c.equals(this.usuarioLogueado)){
+            if(c.equals(this.usuarioLogueado) || this.validarAmigo(c)){
                 estados+="("+f+")"+" "+n+" publicó: \n"+e+"\n----------------------------------------------------------------------------------------------\n";
             }
         }            
@@ -547,5 +555,30 @@ public class FaceMain extends javax.swing.JFrame {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+    public boolean validarAmigo(String correo){
+        for(String c: this.correoAmigos){
+            if(c.equals(correo))
+                return true;
+        }
+        return false;
+    }
+    public void agregarCorreoAmigos(String correo){
+        ControlVentanas.configArchivoAmigos(correo);
+        ControlVentanas.crearRandom();
+        try {
+            ControlVentanas.registros.seek(0);
+            int contador=0;
+            while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
+                String c=ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.readBoolean();
+                ControlVentanas.registros.readBoolean();
+                correoAmigos[contador]=c;
+                contador++;                
+            }
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
     }
 }

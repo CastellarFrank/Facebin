@@ -79,6 +79,9 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     public static void configArchivoPerfil(String correo){
         configFile("Cuentas/"+correo+"/profile.fbn");
     }
+    public static void configArchivoAmigos(String correo){
+        configFile("Cuentas/"+correo+"/manageFriends.fbn");
+    }
     public static void crearRandom(){
         try{
             registros= new RandomAccessFile(file,"rw");
@@ -110,8 +113,8 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     public static void crearFacePerfil(String correo,String user){
         face=new FaceMain("FACEBIN, Perfíl",correo,user);
     }
-    public static void abrirBusqueda(){
-        busqueda=new BuscarAmigos();
+    public static void abrirBusqueda(String correo){
+        busqueda=new BuscarAmigos(correo);
     }
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {

@@ -13,6 +13,8 @@ import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /*
@@ -166,6 +168,7 @@ public class Registrar extends javax.swing.JFrame {
         ControlVentanas.registros.writeBoolean(true);
     }
     private void crearNuevoPerfil(String correo) throws Exception{
+        ControlVentanas.crearArchivoManageFriends(correo);
         ControlVentanas.configArchivoPerfil(correo);
         ControlVentanas.crearFile();
         ControlVentanas.crearRandom();
@@ -587,4 +590,24 @@ public class Registrar extends javax.swing.JFrame {
         }
         return "";
     }
+    public int contarAmigos(String correo){
+        ControlVentanas.configArchivoAmigos(correo);
+        ControlVentanas.crearRandom();
+        int cont=0;
+        try {
+            
+            ControlVentanas.registros.seek(0);
+            while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
+                ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.readBoolean();
+                ControlVentanas.registros.readBoolean();
+                cont++;
+            }
+            
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+        return cont;
+    }
+    
 }
