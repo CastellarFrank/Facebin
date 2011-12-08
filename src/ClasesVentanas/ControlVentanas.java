@@ -1,7 +1,11 @@
 package ClasesVentanas;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.RandomAccessFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /*
  * To change this template, choose Tools | Templates
@@ -22,9 +26,12 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     static IniciarSesion inicio;
     static Registrar registro;
     static FaceMain face;
+    static ModificarInformacion info;
     static File file=null;
+    static FileReader fileR;
     static BuscarAmigos busqueda=null;
     static RandomAccessFile registros=null;
+    
     /** Creates new form ControlVentanas */
     public ControlVentanas() {
         initComponents();
@@ -68,7 +75,12 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
         configFile("Cuentas/"+correo);
         file.mkdir();
     }
-    
+    public static void crearModificarInfo(String correo){
+        info=new ModificarInformacion(correo);
+    }
+    public static void configArchivoCuenta(String correo){
+        configFile("Cuentas/"+correo);
+    }
     public static void crearArchivoManageFriends(String correo){
         configFile("Cuentas/"+correo+"/manageFriends.fbn");
         crearFile();
@@ -81,6 +93,13 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     }
     public static void configArchivoAmigos(String correo){
         configFile("Cuentas/"+correo+"/manageFriends.fbn");
+    }
+    public static void configArchivoLectura(String correo){
+        try {
+            fileR=new FileReader("Cuentas/"+correo+"/manageFriends.fbn");
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
     }
     public static void crearRandom(){
         try{
@@ -116,6 +135,23 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     public static void abrirBusqueda(String correo){
         busqueda=new BuscarAmigos(correo);
     }
+    public static void borrarUsuario(String correo){
+        configArchivoCuenta(correo);
+        borrar(file,file.listFiles(),0);
+    }
+    private static void borrar(File archiv,File lista[],int pos){
+        if(pos<lista.length){
+            if(lista[pos].isFile()){
+                lista[pos].delete();
+                borrar(archiv,lista,pos+1);
+            }else if(lista[pos].isDirectory()){
+                borrar(lista[pos],lista[pos].listFiles(),0);
+                borrar(archiv,lista,pos+1);
+            }
+        }else{
+            archiv.delete();
+        }
+    }
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             
@@ -129,8 +165,7 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
                 configFile("Principal");
                 file.mkdir();
                 configArchivoGerencia();
-                crearFile();
-                
+                crearFile();                
             }
         });
     }

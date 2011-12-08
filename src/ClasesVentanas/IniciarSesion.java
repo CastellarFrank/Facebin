@@ -9,6 +9,8 @@ import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /*
@@ -40,6 +42,7 @@ public class IniciarSesion extends javax.swing.JFrame {
         formWindowOpened(null);
         this.txtCorreo.setText(correo);
         this.txtContraseña.requestFocus();
+        
     }
     public IniciarSesion(){
         initComponents();
@@ -70,10 +73,12 @@ public class IniciarSesion extends javax.swing.JFrame {
                 email=ControlVentanas.registros.readUTF();
                 contra=ControlVentanas.registros.readUTF();
                 boolean b=ControlVentanas.registros.readBoolean();
-                if(email.equals(this.txtCorreo.getText()) && contra.equals(this.txtContraseña.getText())&&b){
+                if(email.equals(this.txtCorreo.getText()) && contra.equals(this.txtContraseña.getText())){
+                    ControlVentanas.registros.close();
                     return true;
                 }
             }
+            ControlVentanas.registros.close();
         }catch(Exception e){
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -369,4 +374,6 @@ private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIR
     private javax.swing.JPasswordField txtContraseña;
     private javax.swing.JTextField txtCorreo;
     // End of variables declaration//GEN-END:variables
+    
+
 }

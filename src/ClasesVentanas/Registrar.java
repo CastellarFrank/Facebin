@@ -58,7 +58,7 @@ public class Registrar extends javax.swing.JFrame {
         configItems();
         this.txtTelefono.setValue(new Integer(0));
         definirPosicionDerecha();
-        this.setResizable(false);        
+        this.setResizable(false);
         fechaReg=formato.format(fechaActual);
         this.txtCreacion.setText(fechaReg);
         this.setVisible(true);
@@ -166,6 +166,7 @@ public class Registrar extends javax.swing.JFrame {
         ControlVentanas.registros.writeUTF(correo);
         ControlVentanas.registros.writeUTF(this.txtContraseña.getText());
         ControlVentanas.registros.writeBoolean(true);
+        ControlVentanas.registros.close();
     }
     private void crearNuevoPerfil(String correo) throws Exception{
         ControlVentanas.crearArchivoManageFriends(correo);
@@ -175,12 +176,13 @@ public class Registrar extends javax.swing.JFrame {
         ControlVentanas.registros.writeUTF(this.txtNombre.getText());
         ControlVentanas.registros.writeChar(((String)this.cmbGenero.getSelectedItem()).charAt(0));
         Calendar fechaNacimiento=Calendar.getInstance();
-        fechaNacimiento.set((Integer)this.cmbAño.getSelectedItem(), this.cmbMes.getSelectedIndex()-1, (Integer)this.cmbDia.getSelectedItem());
+        fechaNacimiento.set((Integer)this.cmbAño.getSelectedItem(), this.cmbMes.getSelectedIndex(), (Integer)this.cmbDia.getSelectedItem());
         ControlVentanas.registros.writeLong(fechaNacimiento.getTimeInMillis());
         ControlVentanas.registros.writeUTF(this.txtEmail.getText());
         ControlVentanas.registros.writeLong(fechaActual.getTime());
         ControlVentanas.registros.writeInt(Integer.valueOf(this.txtTelefono.getText()));
         ControlVentanas.registros.writeUTF("src/Adornos/user.png");
+        ControlVentanas.registros.close();
         if(!this.txtEstatus.getText().equals(""))
             agregarStatus(txtEstatus.getText(),this.txtEmail.getText(),this.txtNombre.getText());
     }
@@ -568,6 +570,7 @@ public class Registrar extends javax.swing.JFrame {
             ControlVentanas.registros.writeUTF(nombre);
             ControlVentanas.registros.writeUTF(Estatus);
             ControlVentanas.registros.writeUTF(formato.format(fechaAhorita));
+            ControlVentanas.registros.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -584,7 +587,13 @@ public class Registrar extends javax.swing.JFrame {
             ControlVentanas.registros.readLong();
             ControlVentanas.registros.readInt();
             String p=ControlVentanas.registros.readUTF();
+            ControlVentanas.registros.close();
             return p;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        try {
+            ControlVentanas.registros.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -603,11 +612,31 @@ public class Registrar extends javax.swing.JFrame {
                 ControlVentanas.registros.readBoolean();
                 cont++;
             }
-            
+            ControlVentanas.registros.close();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
+        
         return cont;
+    }
+    public boolean verificarCuentaActiva(String correo){
+        ControlVentanas.configArchivoGerencia();
+        ControlVentanas.crearRandom();
+        try{
+            ControlVentanas.registros.seek(0);
+            while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
+                String c=ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.readUTF();
+                boolean b=ControlVentanas.registros.readBoolean();
+                if(correo.equals(c) && b){
+                    return true;
+                }                    
+            }
+        }catch(IOException io){
+            System.out.println(io.getMessage());
+            io.printStackTrace();
+        }
+        return false;
     }
     
 }

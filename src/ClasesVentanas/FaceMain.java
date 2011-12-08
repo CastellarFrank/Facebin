@@ -11,8 +11,11 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Box;
@@ -45,36 +48,44 @@ public class FaceMain extends javax.swing.JFrame {
     boolean limite=false;
     int cantAmigos=0;
     String correoAmigos[];
+    String amigosAceptados[];
+    String solicitudesAmigos[];
+    
     /** Creates new form FaceMain */
     public FaceMain(String t,String correo){
         initComponents();
-        cantAmigos=ControlVentanas.registro.contarAmigos(correo);
         usuarioLogueado=correo;
         nombreUser=this.getNombre(correo);
-        correoAmigos= new String[cantAmigos];
-        this.agregarCorreoAmigos(correo);
+        configArrayFriends();
         configurarImagen();
         this.setTitle(t);        
         configurarFormPrincipal();
         configurarPrincipal();
         formWindowOpened(null);
     }
+    
     public FaceMain(String t,String correo,String user){
         initComponents();
-        cantAmigos=ControlVentanas.registro.contarAmigos(correo);
         usuarioLogueado=correo;
         nombreUser=user;
+        configArrayFriends();
         configurarImagen();
-        limite=true;
-        correoAmigos= new String[cantAmigos];
-        this.agregarCorreoAmigos(correo);
+        limite=true;        
         this.setTitle(t);
         this.configurarFormFace();
         configurarVentanaEstados();
         publicarEstadosPrincipales(limite);
         this.configurarLabelsProfile();
-        formWindowOpened(null);
-        
+        this.configurarLabelsInformacion();
+        this.ObtenerDatosLogueado(correo);
+        formWindowOpened(null);        
+    }
+    public void configArrayFriends(){
+        cantAmigos=ControlVentanas.registro.contarAmigos(this.usuarioLogueado);
+        correoAmigos= new String[cantAmigos];
+        amigosAceptados=new String[cantAmigos];
+        solicitudesAmigos=new String[cantAmigos];
+        this.agregarCorreoAmigos(this.usuarioLogueado);
     }
     private void configurarFormFace(){
         this.setVisible(true);
@@ -96,7 +107,7 @@ public class FaceMain extends javax.swing.JFrame {
     }
    private void configurarPanelIzquierdoPrincipal(){
        Container panel=new Container();
-       this.lblTitulo.setLocation(600-(this.lblTitulo.getWidth()/2), 72);
+       this.lblTitulo.setLocation(594-(this.lblTitulo.getWidth()/2), 52);
        panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
        panel.add(this.jLabel2,BorderLayout.CENTER) ;
        panel.add(Box.createRigidArea(new Dimension(10,25)));
@@ -104,32 +115,52 @@ public class FaceMain extends javax.swing.JFrame {
        panel.add(Box.createRigidArea(new Dimension(10,25)));
        panel.add(this.jLabel4,BorderLayout.CENTER) ;
        panel.add(Box.createRigidArea(new Dimension(10,25)));
-       panel.setBounds((250/2)-(120/2),200,130,200);
+       panel.setBounds((320/2)-(120/2),190,130,200);
        this.add(panel);
        this.jLabel5.setVisible(false);
        this.jLabel6.setVisible(false);
        this.jLabel7.setVisible(false);
        this.jLabel8.setVisible(false);
+       this.lblNombre.setVisible(false);
+       this.lblGenero.setVisible(false);
+       this.lblNacimiento.setVisible(false);
+       this.lblTelefono.setVisible(false);
    }
    private void configurarLabelsProfile(){
        Container panel=new Container();
        panel.setLayout(new BoxLayout(panel,BoxLayout.PAGE_AXIS));
        panel.add(this.jLabel5,BorderLayout.CENTER);
-       panel.add(Box.createRigidArea(new Dimension(10,25)));
+       panel.add(Box.createRigidArea(new Dimension(10,20)));
        panel.add(this.jLabel6,BorderLayout.CENTER);
-       panel.add(Box.createRigidArea(new Dimension(10,25)));
+       panel.add(Box.createRigidArea(new Dimension(10,20)));
        panel.add(this.jLabel7,BorderLayout.CENTER);
-       panel.add(Box.createRigidArea(new Dimension(10,25)));
-       panel.add(this.jLabel3,BorderLayout.CENTER);
-       panel.add(Box.createRigidArea(new Dimension(10,25)));
-       panel.add(this.jLabel4,BorderLayout.CENTER);
-       panel.add(Box.createRigidArea(new Dimension(10,25)));
+       panel.add(Box.createRigidArea(new Dimension(10,20)));
        panel.add(this.jLabel8,BorderLayout.CENTER);
-       panel.setBounds((250/2)-(120/2),200,200,200);
+       panel.add(Box.createRigidArea(new Dimension(10,20)));
+       panel.add(this.jLabel3,BorderLayout.CENTER);
+       panel.add(Box.createRigidArea(new Dimension(10,20)));
+       panel.add(this.jLabel4,BorderLayout.CENTER);
+       panel.setBounds((320/2)-(120/2),260,200,200);
        this.add(panel);
        this.lblTitulo.setText(nombreUser);     
        this.jLabel2.setVisible(false);
-       this.lblTitulo.setLocation(600-(this.lblTitulo.getWidth()/2), 72);
+       this.lblTitulo.setLocation(600-(this.lblTitulo.getWidth()/2), 52);
+   }
+   private void configurarLabelsInformacion(){
+       Container panel=new Container();
+       panel.setLayout(new BoxLayout(panel,BoxLayout.PAGE_AXIS));
+       panel.add(this.lblNombre,BorderLayout.CENTER);
+       panel.add(Box.createRigidArea(new Dimension(10,5)));
+       panel.add(this.lblGenero,BorderLayout.CENTER);
+       panel.add(Box.createRigidArea(new Dimension(10,5)));
+       panel.add(this.lblNacimiento,BorderLayout.CENTER);
+       panel.add(Box.createRigidArea(new Dimension(10,5)));
+       panel.add(this.lblTelefono,BorderLayout.CENTER);
+       panel.setBounds((320/2)-(120/2),160,200,200);
+       this.add(panel);
+       this.lblTitulo.setText(nombreUser);     
+       this.jLabel2.setVisible(false);
+       this.lblTitulo.setLocation(600-(this.lblTitulo.getWidth()/2), 52);
    }
    private void configurarPrincipal(){
        configurarVentanaEstados();
@@ -141,9 +172,9 @@ public class FaceMain extends javax.swing.JFrame {
    
    private void configurarVentanaEstados(){
        this.jScrollPane1.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-       this.txtIngresarEstado.setBounds(400,170,315,20);
-       btnInsertarEstado.setBounds(720, 169, 80, 23);
-       this.jScrollPane1.setBounds((600)-(200),200,400,350);          
+       this.txtIngresarEstado.setBounds(394,170,315,20);
+       btnInsertarEstado.setBounds(714, 169, 80, 23);
+       this.jScrollPane1.setBounds((594)-(200),200,400,350);          
        this.txtEstados.setEditable(false);
    }
    public void agregarEstado(String estado){
@@ -156,6 +187,7 @@ public class FaceMain extends javax.swing.JFrame {
             ControlVentanas.crearRandom();
             ControlVentanas.registros.seek(0);
             n=ControlVentanas.registros.readUTF();
+            ControlVentanas.registros.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
@@ -182,6 +214,10 @@ public class FaceMain extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
+        lblNombre = new javax.swing.JLabel();
+        lblGenero = new javax.swing.JLabel();
+        lblNacimiento = new javax.swing.JLabel();
+        lblTelefono = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addMouseListener(new java.awt.event.MouseAdapter() {
@@ -238,6 +274,11 @@ public class FaceMain extends javax.swing.JFrame {
                 txtIngresarEstadoFocusGained(evt);
             }
         });
+        txtIngresarEstado.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtIngresarEstadoKeyPressed(evt);
+            }
+        });
         getContentPane().add(txtIngresarEstado);
         txtIngresarEstado.setBounds(430, 170, 360, 20);
 
@@ -284,6 +325,14 @@ public class FaceMain extends javax.swing.JFrame {
         btnInsertarEstado.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnInsertarEstadoMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnInsertarEstadoMouseEntered(evt);
+            }
+        });
+        btnInsertarEstado.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                btnInsertarEstadoKeyPressed(evt);
             }
         });
         getContentPane().add(btnInsertarEstado);
@@ -335,14 +384,37 @@ public class FaceMain extends javax.swing.JFrame {
         jLabel7.setBounds(130, 350, 160, 16);
 
         jLabel8.setFont(new java.awt.Font("Verdana", 1, 12));
-        jLabel8.setText("Mofificar Perfil");
+        jLabel8.setText("Modificar Perfil");
         jLabel8.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel8MouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 jLabel8MouseEntered(evt);
             }
         });
         getContentPane().add(jLabel8);
         jLabel8.setBounds(130, 370, 170, 16);
+
+        lblNombre.setFont(new java.awt.Font("Tahoma", 2, 11));
+        lblNombre.setText("jLabel9");
+        getContentPane().add(lblNombre);
+        lblNombre.setBounds(260, 220, 140, 14);
+
+        lblGenero.setFont(new java.awt.Font("Tahoma", 2, 11));
+        lblGenero.setText("jLabel9");
+        getContentPane().add(lblGenero);
+        lblGenero.setBounds(260, 250, 140, 14);
+
+        lblNacimiento.setFont(new java.awt.Font("Tahoma", 2, 11));
+        lblNacimiento.setText("jLabel9");
+        getContentPane().add(lblNacimiento);
+        lblNacimiento.setBounds(260, 280, 130, 14);
+
+        lblTelefono.setFont(new java.awt.Font("Tahoma", 2, 11));
+        lblTelefono.setText("jLabel9");
+        getContentPane().add(lblTelefono);
+        lblTelefono.setBounds(260, 310, 130, 14);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -364,6 +436,7 @@ public class FaceMain extends javax.swing.JFrame {
 
     private void formMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseEntered
         this.setCursor(null);
+        this.btnInsertarEstado.setForeground(null);
         this.jLabel2.setForeground(Color.BLACK);
         this.jLabel3.setForeground(Color.BLACK);
         this.jLabel4.setForeground(Color.BLACK);
@@ -473,6 +546,27 @@ public class FaceMain extends javax.swing.JFrame {
         ControlVentanas.abrirBusqueda(this.usuarioLogueado);
     }//GEN-LAST:event_jLabel7MouseClicked
 
+    private void btnInsertarEstadoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInsertarEstadoMouseEntered
+        this.setCursor(Cursor.HAND_CURSOR);
+        this.btnInsertarEstado.setForeground(Color.red);
+    }//GEN-LAST:event_btnInsertarEstadoMouseEntered
+
+    private void txtIngresarEstadoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIngresarEstadoKeyPressed
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER){
+            this.btnInsertarEstadoMouseClicked(null);
+        }
+    }//GEN-LAST:event_txtIngresarEstadoKeyPressed
+
+    private void btnInsertarEstadoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnInsertarEstadoKeyPressed
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER){
+            this.btnInsertarEstadoMouseClicked(null);
+        }
+    }//GEN-LAST:event_btnInsertarEstadoKeyPressed
+
+    private void jLabel8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel8MouseClicked
+        ControlVentanas.crearModificarInfo(this.usuarioLogueado);
+    }//GEN-LAST:event_jLabel8MouseClicked
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnInsertarEstado;
@@ -485,7 +579,11 @@ public class FaceMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblGenero;
     private javax.swing.JLabel lblImagenPerfil;
+    private javax.swing.JLabel lblNacimiento;
+    private javax.swing.JLabel lblNombre;
+    private javax.swing.JLabel lblTelefono;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JTextArea txtEstados;
     private javax.swing.JTextField txtIngresarEstado;
@@ -494,9 +592,9 @@ public class FaceMain extends javax.swing.JFrame {
     private String getImagenPerfil(){
         return ControlVentanas.registro.getPathImagen(this.usuarioLogueado);
     }
-    private void configurarImagen() {
+    private void configurarImagen(){
         this.lblImagenPerfil.setSize(110, 120);
-        this.lblImagenPerfil.setLocation((256/2)-(110/2),38); 
+        this.lblImagenPerfil.setLocation((326/2)-(110/2),28); 
         colocarImagenPerfil(getImagenPerfil());
     }
     private void colocarImagenPerfil(String path){
@@ -513,6 +611,7 @@ public class FaceMain extends javax.swing.JFrame {
                 estados="----------------------------------------------------------------------------------------------\n";
                 imprimirEstadosPrincipales(lim);
                 this.txtEstados.setText(estados);
+                ControlVentanas.registros.close();
             }            
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -534,7 +633,7 @@ public class FaceMain extends javax.swing.JFrame {
                 estados+="("+f+")"+" "+n+" publicó: \n"+e+"\n----------------------------------------------------------------------------------------------\n";
             }
         }else{
-            if(c.equals(this.usuarioLogueado) || this.validarAmigo(c)){
+            if(c.equals(this.usuarioLogueado) || this.buscarEnLosAmigos(c,1)){
                 estados+="("+f+")"+" "+n+" publicó: \n"+e+"\n----------------------------------------------------------------------------------------------\n";
             }
         }            
@@ -551,15 +650,29 @@ public class FaceMain extends javax.swing.JFrame {
             ControlVentanas.registros.readUTF();
             ControlVentanas.registros.readLong();
             ControlVentanas.registros.readInt();
-            ControlVentanas.registros.writeUTF(path);                             
+            ControlVentanas.registros.writeUTF(path);
+            ControlVentanas.registros.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
-    public boolean validarAmigo(String correo){
-        for(String c: this.correoAmigos){
-            if(c.equals(correo))
+    public boolean buscarEnLosAmigos(String correo,int a){
+        if(a==0){
+            return this.validarAmigo(correo, correoAmigos);
+        }else if(a==1){
+            return this.validarAmigo(correo,this.amigosAceptados);            
+        }else{
+            return this.validarAmigo(correo, this.solicitudesAmigos);
+        }
+    }
+    private boolean validarAmigo(String correo,String arreglo[]){
+        for(String c: arreglo){
+            if(c!=null){
+                if(c.equals(correo))
                 return true;
+            }else{
+                break;
+            }      
         }
         return false;
     }
@@ -568,17 +681,74 @@ public class FaceMain extends javax.swing.JFrame {
         ControlVentanas.crearRandom();
         try {
             ControlVentanas.registros.seek(0);
-            int contador=0;
+            int contador=0,contadorA=0,contadorS=0;
+            while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
+                String c=ControlVentanas.registros.readUTF();
+                boolean b=ControlVentanas.registros.readBoolean();
+                ControlVentanas.registros.readBoolean();                
+                if(b){
+                    this.amigosAceptados[contadorA]=c;
+                    contadorA++;
+                }else{
+                    this.solicitudesAmigos[contadorS]=c;
+                    contadorS++;
+                }                    
+                correoAmigos[contador]=c;
+                contador++;                           
+            }
+            ControlVentanas.registros.close();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }        
+    }
+    public boolean miCorreoExisteEnEsteUsuario(String correo){
+        ControlVentanas.configArchivoAmigos(correo);
+        ControlVentanas.crearRandom();
+        try {
+            ControlVentanas.registros.seek(0);
             while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
                 String c=ControlVentanas.registros.readUTF();
                 ControlVentanas.registros.readBoolean();
                 ControlVentanas.registros.readBoolean();
-                correoAmigos[contador]=c;
-                contador++;                
+                if(c.equals(this.usuarioLogueado)){
+                    ControlVentanas.registros.close();
+                    return true;
+                }
+                    
             }
+            ControlVentanas.registros.close();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
-        
+        return false;        
+    }
+    private void ObtenerDatosLogueado(String correo){
+        try {
+            ControlVentanas.configArchivoPerfil(correo);
+            ControlVentanas.crearRandom();
+            String n=ControlVentanas.registros.readUTF();
+            char g=ControlVentanas.registros.readChar();
+            long nacimiento=ControlVentanas.registros.readLong();
+            ControlVentanas.registros.readUTF();
+            ControlVentanas.registros.readLong();
+            int telefono=ControlVentanas.registros.readInt();
+            ControlVentanas.registros.readUTF();
+            this.setDatosPerfil(n, g, nacimiento, telefono);
+            ControlVentanas.registros.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    public void setDatosPerfil(String n,char genero,long nac,int tel){
+        this.lblNombre.setText("Nombre: "+n);
+        this.lblGenero.setText("Genero: "+(genero=='M'?"Masculino":"Femenino"));
+        Date fecha=new Date(nac);
+        SimpleDateFormat formato=new SimpleDateFormat("dd/MM/yyyy");
+        String fechaF=formato.format(fecha);
+        this.lblNacimiento.setText("Fecha N: "+fechaF);
+        this.lblTelefono.setText("Telefono: "+(tel==0?"N/D":tel));
+    }
+    public void cerrarSesion(){
+        this.jLabel3MouseClicked(null);
     }
 }

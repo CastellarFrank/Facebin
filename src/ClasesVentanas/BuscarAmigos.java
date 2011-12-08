@@ -77,11 +77,18 @@ public class BuscarAmigos extends javax.swing.JFrame {
                 String p=ControlVentanas.registros.readUTF();
                 setDatos(p,n,g,f);
                 this.userEncontrado=correo;
+                ControlVentanas.registros.close();
                 return true;
                 
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+            
+        try {
+            ControlVentanas.registros.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
         return false;
     }
 
@@ -216,19 +223,24 @@ public class BuscarAmigos extends javax.swing.JFrame {
     }//GEN-LAST:event_txtCorreoKeyPressed
 
     private void btnEnviarSolicitudMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEnviarSolicitudMouseClicked
-        if(!ControlVentanas.face.validarAmigo(userEncontrado)){
-            if(!userEncontrado.equals(this.usuarioLogueado)){
-                if(this.enviarSolicitud(userEncontrado)){
-                    JOptionPane.showMessageDialog(null, "Su solicitud ha sido enviada con exito", "Solicitud enviada", JOptionPane.INFORMATION_MESSAGE);
+        if(!ControlVentanas.face.miCorreoExisteEnEsteUsuario(this.userEncontrado)){
+            if(!ControlVentanas.face.buscarEnLosAmigos(userEncontrado, 0)){
+                if(!userEncontrado.equals(this.usuarioLogueado)){
+                    if(this.enviarSolicitud(userEncontrado)){                    
+                        JOptionPane.showMessageDialog(null, "Su solicitud ha sido enviada con exito", "Solicitud enviada", JOptionPane.INFORMATION_MESSAGE);
+                        ControlVentanas.face.configArrayFriends();
+                    }else{
+                        JOptionPane.showMessageDialog(null, "Error al enviar la solicitud", "Error", JOptionPane.INFORMATION_MESSAGE);
+                    }   
                 }else{
-                    JOptionPane.showMessageDialog(null, "Error al enviar la solicitud", "Error", JOptionPane.INFORMATION_MESSAGE);
-                }   
+                    JOptionPane.showMessageDialog(null, "No puedes agregarte a ti mismo como amigo", "Eres tú mismo (ForeverAlone)", JOptionPane.INFORMATION_MESSAGE);
+                }            
             }else{
-                JOptionPane.showMessageDialog(null, "No puedes agregarte a ti mismo como amigo", "Eres tú mismo (ForeverAlone)", JOptionPane.INFORMATION_MESSAGE);
-            }            
+                JOptionPane.showMessageDialog(null, "El usuario ya es uno de tus amigos o ya has recibido una invitación de este usuario", "El amigo ya existe", JOptionPane.INFORMATION_MESSAGE);
+            }        
         }else{
-            JOptionPane.showMessageDialog(null, "El usuario ya forma parte de tu lista de amigos", "El amigo ya existe", JOptionPane.INFORMATION_MESSAGE);
-        }        
+            JOptionPane.showMessageDialog(null, "El usuario ya es uno de tus amigos o ya has enviado una solicitud a este usuario", "Si no es tu amigo, te está ignorando", JOptionPane.INFORMATION_MESSAGE);
+        }
         this.txtCorreo.requestFocus();
         this.txtCorreo.selectAll();
     }//GEN-LAST:event_btnEnviarSolicitudMouseClicked
@@ -320,15 +332,21 @@ public class BuscarAmigos extends javax.swing.JFrame {
     }
     private boolean enviarSolicitud(String correo){
         ControlVentanas.configArchivoAmigos(correo);
-        ControlVentanas.crearRandom();        
+        ControlVentanas.crearRandom();     
         try {
             ControlVentanas.registros.seek(ControlVentanas.registros.length());
             ControlVentanas.registros.writeUTF(this.usuarioLogueado);
             ControlVentanas.registros.writeBoolean(false);
             ControlVentanas.registros.writeBoolean(false);
+            ControlVentanas.registros.close();
             return true;
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
+        }
+        try {
+            ControlVentanas.registros.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
         return false;
     }
