@@ -42,7 +42,6 @@ public class IniciarSesion extends javax.swing.JFrame {
         formWindowOpened(null);
         this.txtCorreo.setText(correo);
         this.txtContraseña.requestFocus();
-        
     }
     public IniciarSesion(){
         initComponents();
@@ -51,7 +50,7 @@ public class IniciarSesion extends javax.swing.JFrame {
         this.setVisible(true);
         this.setSize(500, 400);
         definirPosicionCentral();
-        formWindowOpened(null);       
+        formWindowOpened(null);
     }
     
     private void formWindowOpened(WindowEvent evt) {

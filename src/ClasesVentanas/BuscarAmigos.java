@@ -222,6 +222,7 @@ public class BuscarAmigos extends javax.swing.JFrame {
     }//GEN-LAST:event_txtCorreoKeyPressed
 
     private void btnEnviarSolicitudMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEnviarSolicitudMouseClicked
+        ControlVentanas.agregarCuentasActivas();
         if(!ControlVentanas.face.miCorreoExisteEnEsteUsuario(this.userEncontrado)){
             if(!ControlVentanas.face.buscarEnLosAmigos(userEncontrado, 0)){
                 if(!userEncontrado.equals(this.usuarioLogueado)){

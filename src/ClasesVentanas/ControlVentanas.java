@@ -206,8 +206,7 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
                 configFile("Principal");
                 file.mkdir();
                 configArchivoGerencia();
-                crearFile();
-                agregarCuentasActivas();                
+                crearFile();       
             }
         });
     }
