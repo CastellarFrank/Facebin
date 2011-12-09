@@ -16,13 +16,10 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
@@ -620,23 +617,28 @@ public class FaceMain extends javax.swing.JFrame {
 
     private void imprimirEstadosPrincipales(boolean lim)throws IOException{
         String c="",n="",e="",f="";
+        boolean b=false;
         
         if(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
             c=ControlVentanas.registros.readUTF();
             n=ControlVentanas.registros.readUTF();
             e=ControlVentanas.registros.readUTF();
             f=ControlVentanas.registros.readUTF();
+            b=ControlVentanas.registros.readBoolean();
             this.imprimirEstadosPrincipales(lim);
         }
-        if(lim){
-            if(c.equals(this.usuarioLogueado)){
-                estados+="("+f+")"+" "+n+" publicó: \n"+e+"\n----------------------------------------------------------------------------------------------\n";
-            }
-        }else{
-            if(c.equals(this.usuarioLogueado) || this.buscarEnLosAmigos(c,1)){
-                estados+="("+f+")"+" "+n+" publicó: \n"+e+"\n----------------------------------------------------------------------------------------------\n";
-            }
-        }            
+        if(b){
+            if(lim){
+                if(c.equals(this.usuarioLogueado)){
+                    estados+="("+f+")"+" "+n+" publicó: \n"+e+"\n----------------------------------------------------------------------------------------------\n";
+                }
+            }else{
+                if(c.equals(this.usuarioLogueado) || this.buscarEnLosAmigos(c,1)){
+                    estados+="("+f+")"+" "+n+" publicó: \n"+e+"\n----------------------------------------------------------------------------------------------\n";
+                }
+            }  
+        }
+                  
     }
 
     private void guardarPathImagenPerfil(String path) {
@@ -680,25 +682,31 @@ public class FaceMain extends javax.swing.JFrame {
         ControlVentanas.configArchivoAmigos(correo);
         ControlVentanas.crearRandom();
         try {
-            ControlVentanas.registros.seek(0);
+            long puntero=0;
             int contador=0,contadorA=0,contadorS=0;
+            ControlVentanas.registros.seek(puntero);
             while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
+                ControlVentanas.registros.seek(puntero);
                 String c=ControlVentanas.registros.readUTF();
                 boolean b=ControlVentanas.registros.readBoolean();
-                ControlVentanas.registros.readBoolean();                
-                if(b){
-                    this.amigosAceptados[contadorA]=c;
-                    contadorA++;
-                }else{
-                    this.solicitudesAmigos[contadorS]=c;
-                    contadorS++;
-                }                    
-                correoAmigos[contador]=c;
-                contador++;                           
+                ControlVentanas.registros.readBoolean();
+                puntero=ControlVentanas.registros.getFilePointer();
+                if(ControlVentanas.verificarCuentaActiva(c)){
+                    if(b){
+                        this.amigosAceptados[contadorA]=c;
+                        contadorA++;
+                    }else{
+                        this.solicitudesAmigos[contadorS]=c;
+                        contadorS++;
+                    }                    
+                    correoAmigos[contador]=c;
+                    contador++;
+                }                                           
             }
             ControlVentanas.registros.close();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
+            ex.printStackTrace();
         }        
     }
     public boolean miCorreoExisteEnEsteUsuario(String correo){
@@ -719,6 +727,7 @@ public class FaceMain extends javax.swing.JFrame {
             ControlVentanas.registros.close();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
+            ex.printStackTrace();
         }
         return false;        
     }
@@ -733,8 +742,8 @@ public class FaceMain extends javax.swing.JFrame {
             ControlVentanas.registros.readLong();
             int telefono=ControlVentanas.registros.readInt();
             ControlVentanas.registros.readUTF();
-            this.setDatosPerfil(n, g, nacimiento, telefono);
             ControlVentanas.registros.close();
+            this.setDatosPerfil(n, g, nacimiento, telefono);
         } catch (IOException ex) {
             ex.printStackTrace();
         }

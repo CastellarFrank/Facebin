@@ -75,11 +75,10 @@ public class BuscarAmigos extends javax.swing.JFrame {
                 long f=ControlVentanas.registros.readLong(); 
                 ControlVentanas.registros.readInt();
                 String p=ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.close();
                 setDatos(p,n,g,f);
                 this.userEncontrado=correo;
-                ControlVentanas.registros.close();
-                return true;
-                
+                return true;                
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -342,6 +341,7 @@ public class BuscarAmigos extends javax.swing.JFrame {
             return true;
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
+            ex.printStackTrace();
         }
         try {
             ControlVentanas.registros.close();
