@@ -354,7 +354,7 @@ public class FaceMain extends javax.swing.JFrame {
         getContentPane().add(jLabel5);
         jLabel5.setBounds(130, 310, 74, 16);
 
-        jLabel6.setFont(new java.awt.Font("Verdana", 1, 12));
+        jLabel6.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         jLabel6.setText("Ver Solicitudes");
         jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -365,7 +365,7 @@ public class FaceMain extends javax.swing.JFrame {
             }
         });
         getContentPane().add(jLabel6);
-        jLabel6.setBounds(130, 330, 160, 16);
+        jLabel6.setBounds(130, 330, 100, 16);
 
         jLabel7.setFont(new java.awt.Font("Verdana", 1, 12));
         jLabel7.setText("Buscar Amigos");

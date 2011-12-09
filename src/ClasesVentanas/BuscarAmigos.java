@@ -223,7 +223,7 @@ public class BuscarAmigos extends javax.swing.JFrame {
 
     private void btnEnviarSolicitudMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnEnviarSolicitudMouseClicked
         if(!ControlVentanas.face.miCorreoExisteEnEsteUsuario(this.userEncontrado)){
-            if(!ControlVentanas.face.buscarEnLosAmigos(userEncontrado, 0)){
+            if(!ControlVentanas.face.buscarEnLosAmigos(userEncontrado, 2)){
                 if(!userEncontrado.equals(this.usuarioLogueado)){
                     if(this.enviarSolicitud(userEncontrado)){                    
                         JOptionPane.showMessageDialog(null, "Su solicitud ha sido enviada con exito", "Solicitud enviada", JOptionPane.INFORMATION_MESSAGE);

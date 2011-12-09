@@ -624,23 +624,4 @@ public class Registrar extends javax.swing.JFrame {
         
         return cont;
     }
-//    public boolean verificarCuentaActiva(String correo){
-//        ControlVentanas.configArchivoGerencia();
-//        ControlVentanas.crearRandom();
-//        try{
-//            ControlVentanas.registros.seek(0);
-//            while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
-//                String c=ControlVentanas.registros.readUTF();
-//                ControlVentanas.registros.readUTF();
-//                boolean b=ControlVentanas.registros.readBoolean();
-//                if(correo.equals(c) && b){
-//                    return true;
-//                }                    
-//            }
-//        }catch(IOException io){
-//            System.out.println(io.getMessage());
-//            io.printStackTrace();
-//        }
-//        return false;
-//    }
 }
