@@ -39,9 +39,6 @@ public class Registrar extends javax.swing.JFrame {
     SimpleDateFormat formato=new SimpleDateFormat("dd/MM/yyyy");
     String fechaReg;
     
-    
-    
-    /** Creates new form Registrar */
     public Registrar(String t){
         initComponents();
         this.setTitle(t);
@@ -134,6 +131,9 @@ public class Registrar extends javax.swing.JFrame {
         }else if(!this.jCheckBox1.isSelected()){
             JOptionPane.showMessageDialog(null, "Debe Aceptar los terminos y condiciones", "Terminos y Condiciones", JOptionPane.INFORMATION_MESSAGE);
             return false;
+        }else if(this.txtTelefono.getText().length()>10){
+            JOptionPane.showMessageDialog(null, "El número telefónico no puede tener más de 10 números", "Número inválido", JOptionPane.INFORMATION_MESSAGE);
+            this.txtTelefono.requestFocus();
         }
         return crearEntradaRegistro();
     }
@@ -145,7 +145,7 @@ public class Registrar extends javax.swing.JFrame {
             this.txtEmail.requestFocus();
             this.txtEmail.selectAll();
             return false;
-        }            
+        } 
         try{
             String correo=this.txtEmail.getText();
             ControlVentanas.crearFolderUser(correo);
@@ -570,6 +570,7 @@ public class Registrar extends javax.swing.JFrame {
             ControlVentanas.registros.writeUTF(nombre);
             ControlVentanas.registros.writeUTF(Estatus);
             ControlVentanas.registros.writeUTF(formato.format(fechaAhorita));
+            ControlVentanas.registros.writeBoolean(true);
             ControlVentanas.registros.close();
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -603,40 +604,43 @@ public class Registrar extends javax.swing.JFrame {
         ControlVentanas.configArchivoAmigos(correo);
         ControlVentanas.crearRandom();
         int cont=0;
-        try {
-            
-            ControlVentanas.registros.seek(0);
+        try {            
+            long puntero=0;
+            ControlVentanas.registros.seek(puntero);
             while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
-                ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.seek(puntero);
+                String c=ControlVentanas.registros.readUTF();
                 ControlVentanas.registros.readBoolean();
                 ControlVentanas.registros.readBoolean();
-                cont++;
+                puntero=ControlVentanas.registros.getFilePointer();
+                if(ControlVentanas.verificarCuentaActiva(c))
+                    cont++;
             }
             ControlVentanas.registros.close();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
+            ex.printStackTrace();
         }
         
         return cont;
     }
-    public boolean verificarCuentaActiva(String correo){
-        ControlVentanas.configArchivoGerencia();
-        ControlVentanas.crearRandom();
-        try{
-            ControlVentanas.registros.seek(0);
-            while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
-                String c=ControlVentanas.registros.readUTF();
-                ControlVentanas.registros.readUTF();
-                boolean b=ControlVentanas.registros.readBoolean();
-                if(correo.equals(c) && b){
-                    return true;
-                }                    
-            }
-        }catch(IOException io){
-            System.out.println(io.getMessage());
-            io.printStackTrace();
-        }
-        return false;
-    }
-    
+//    public boolean verificarCuentaActiva(String correo){
+//        ControlVentanas.configArchivoGerencia();
+//        ControlVentanas.crearRandom();
+//        try{
+//            ControlVentanas.registros.seek(0);
+//            while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
+//                String c=ControlVentanas.registros.readUTF();
+//                ControlVentanas.registros.readUTF();
+//                boolean b=ControlVentanas.registros.readBoolean();
+//                if(correo.equals(c) && b){
+//                    return true;
+//                }                    
+//            }
+//        }catch(IOException io){
+//            System.out.println(io.getMessage());
+//            io.printStackTrace();
+//        }
+//        return false;
+//    }
 }
