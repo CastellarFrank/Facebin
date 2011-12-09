@@ -179,19 +179,10 @@ public class ModificarInformacion extends javax.swing.JFrame {
         if(this.cmbEstado.getSelectedIndex()==1){
             if(JOptionPane.showConfirmDialog(null, "¿Realmente desea desactivar su cuenta?, Su información será borrada","Desactivar Cuenta", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE)==0){
                 this.modificarInfo(usuarioLogueado);
-                System.out.println("paso");
-                ControlVentanas.configArchivoLectura(usuarioLogueado);
-
-                try {
-                    ControlVentanas.fileR.close();
-                    ControlVentanas.configArchivoAmigos(usuarioLogueado);
-                    ControlVentanas.file.delete();
-                    
-                } catch (IOException ex) {
-                    Logger.getLogger(ModificarInformacion.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                
+                ControlVentanas.agregarCuentasActivas();
                 this.dispose();
+                desactivarEstados(usuarioLogueado);
+                ControlVentanas.borrarUsuario(usuarioLogueado);
                 ControlVentanas.face.cerrarSesion();
             }else{
                 this.cmbEstado.requestFocus();
@@ -304,17 +295,61 @@ public class ModificarInformacion extends javax.swing.JFrame {
             ControlVentanas.registros.readLong();
             int tel=Integer.valueOf(this.txtTelefono.getText());
             ControlVentanas.registros.writeInt(tel);
-            ControlVentanas.registro.verificarCuentaActiva(correo);
-            ControlVentanas.registros.seek(ControlVentanas.registros.getFilePointer()-1);
-            boolean b=(this.cmbEstado.getSelectedIndex()==0?true:false);
-            ControlVentanas.registros.writeBoolean(b);
             ControlVentanas.registros.close();
+            boolean b=desactivarCuenta(correo);
             if(b){
                 ControlVentanas.face.setDatosPerfil(n, c, cal.getTimeInMillis(), tel);
             }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+
+    private boolean desactivarCuenta(String correo) {
+        ControlVentanas.configArchivoGerencia();
+        ControlVentanas.crearRandom();
+        boolean b=true;
+        try{
+            ControlVentanas.registros.seek(0);
+            while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
+                String c=ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.readUTF();
+                if(c.equals(correo)){
+                    b=(this.cmbEstado.getSelectedIndex()==0?true:false);
+                    ControlVentanas.registros.writeBoolean(b);
+                    break;
+                }else{
+                    ControlVentanas.registros.readBoolean();
+                }         
+            }
+            ControlVentanas.registros.close();
+        }catch(IOException io){
+            System.out.println(io.getMessage());
+            io.printStackTrace();
+        }
+        return b;
+    }
+    private void desactivarEstados(String correo){
+        ControlVentanas.configArchivoEstados();
+        ControlVentanas.crearRandom();
+        try {
+            ControlVentanas.registros.seek(0);
+            while(ControlVentanas.registros.getFilePointer()<ControlVentanas.registros.length()){
+                String c=ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.readUTF();
+                if(c.equals(correo)){
+                    ControlVentanas.registros.writeBoolean(false);
+                }else{
+                    ControlVentanas.registros.readBoolean();
+                }
+            }
+            ControlVentanas.registros.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        
     }
 
 }

@@ -3,6 +3,7 @@ package ClasesVentanas;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +32,7 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     static FileReader fileR;
     static BuscarAmigos busqueda=null;
     static RandomAccessFile registros=null;
+    static String cuentasActivas[];
     
     /** Creates new form ControlVentanas */
     public ControlVentanas() {
@@ -94,13 +96,6 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     public static void configArchivoAmigos(String correo){
         configFile("Cuentas/"+correo+"/manageFriends.fbn");
     }
-    public static void configArchivoLectura(String correo){
-        try {
-            fileR=new FileReader("Cuentas/"+correo+"/manageFriends.fbn");
-        } catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-        }
-    }
     public static void crearRandom(){
         try{
             registros= new RandomAccessFile(file,"rw");
@@ -152,10 +147,56 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
             archiv.delete();
         }
     }
+    public static boolean verificarCuentaActiva(String correo){
+        for(String c:cuentasActivas){
+            if(correo.equals(c)){
+                return true;
+            }
+        }
+        return false;
+    }
+    public static void agregarCuentasActivas(){
+        cuentasActivas=new String[totalCuentasActivas()];
+        configArchivoGerencia();
+        crearRandom();
+        int cont=0;
+        try {
+            registros.seek(0);
+            while(registros.getFilePointer()<registros.length()){
+                String c=registros.readUTF();
+                registros.readUTF();
+                boolean b=registros.readBoolean();
+                if(b){
+                    cuentasActivas[cont]=c;
+                    cont++;
+                }             
+            }
+            registros.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    private static int totalCuentasActivas(){
+        int cont=0;
+        configArchivoGerencia();
+        crearRandom();
+        try {
+            registros.seek(0);
+            while(registros.getFilePointer()<registros.length()){
+                registros.readUTF();
+                registros.readUTF();
+                boolean b=registros.readBoolean();
+                if(b)
+                    cont++;
+            }
+            registros.close();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return cont;        
+    }
     public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            
-            
+        java.awt.EventQueue.invokeLater(new Runnable() {            
             @Override
             public void run(){
                 crearRegistro();
@@ -165,7 +206,8 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
                 configFile("Principal");
                 file.mkdir();
                 configArchivoGerencia();
-                crearFile();                
+                crearFile();
+                agregarCuentasActivas();                
             }
         });
     }
