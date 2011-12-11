@@ -228,7 +228,7 @@ public class BuscarAmigos extends javax.swing.JFrame {
                 if(!userEncontrado.equals(this.usuarioLogueado)){
                     if(this.enviarSolicitud(userEncontrado)){                    
                         JOptionPane.showMessageDialog(null, "Su solicitud ha sido enviada con exito", "Solicitud enviada", JOptionPane.INFORMATION_MESSAGE);
-                        ControlVentanas.face.configArrayFriends();
+                        ControlVentanas.face.configArrayFriends(this.usuarioLogueado);
                     }else{
                         JOptionPane.showMessageDialog(null, "Error al enviar la solicitud", "Error", JOptionPane.INFORMATION_MESSAGE);
                     }   
@@ -332,7 +332,7 @@ public class BuscarAmigos extends javax.swing.JFrame {
     }
     private boolean enviarSolicitud(String correo){
         ControlVentanas.configArchivoAmigos(correo);
-        ControlVentanas.crearRandom();     
+        ControlVentanas.crearRandom();
         try {
             ControlVentanas.registros.seek(ControlVentanas.registros.length());
             ControlVentanas.registros.writeUTF(this.usuarioLogueado);

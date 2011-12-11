@@ -32,6 +32,7 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     static FileReader fileR;
     static BuscarAmigos busqueda=null;
     static RandomAccessFile registros=null;
+    static SolicitudesAmigos solicitud;
     static String cuentasActivas[];
     
     /** Creates new form ControlVentanas */
@@ -118,6 +119,9 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     public static void crearInicio(String correo){
         inicio=new IniciarSesion(correo);
     }
+    public static void crearSolicitudAmigos(){
+        solicitud=new SolicitudesAmigos();
+    }
     public static void crearRegistro(){
         registro=new Registrar("Registrar una nueva cuenta"); 
     }
@@ -126,6 +130,9 @@ public abstract class ControlVentanas extends javax.swing.JFrame {
     }
     public static void crearFacePerfil(String correo,String user){
         face=new FaceMain("FACEBIN, Perfíl",correo,user);
+    }
+    public static void crearFaceVisitante(String correo,String user,String correov,String userv){
+        face=new FaceMain(correo,user,correov,userv);
     }
     public static void abrirBusqueda(String correo){
         busqueda=new BuscarAmigos(correo);

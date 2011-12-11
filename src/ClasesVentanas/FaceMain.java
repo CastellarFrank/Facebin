@@ -8,18 +8,24 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
@@ -47,14 +53,21 @@ public class FaceMain extends javax.swing.JFrame {
     String correoAmigos[];
     String amigosAceptados[];
     String solicitudesAmigos[];
+    Object objetos[][];
+    int tamaño;
+    Container contenedores[][];
+    Container PanelPrincipal=new Container();
+    JScrollPane scroll=new JScrollPane();
+    boolean visita=false;
+    
     
     /** Creates new form FaceMain */
     public FaceMain(String t,String correo){
         initComponents();
         usuarioLogueado=correo;
         nombreUser=this.getNombre(correo);
-        configArrayFriends();
-        configurarImagen();
+        configArrayFriends(correo);
+        configurarImagen(correo);
         this.setTitle(t);        
         configurarFormPrincipal();
         configurarPrincipal();
@@ -65,24 +78,169 @@ public class FaceMain extends javax.swing.JFrame {
         initComponents();
         usuarioLogueado=correo;
         nombreUser=user;
-        configArrayFriends();
-        configurarImagen();
-        limite=true;        
+        configArrayFriends(correo);
+        configurarImagen(correo);
+        limite=true;       
         this.setTitle(t);
         this.configurarFormFace();
         configurarVentanaEstados();
-        publicarEstadosPrincipales(limite);
+        publicarEstadosPrincipales(limite,correo);
         this.configurarLabelsProfile();
-        this.configurarLabelsInformacion();
+        this.configurarLabelsInformacion(user);
         this.ObtenerDatosLogueado(correo);
-        formWindowOpened(null);        
+        inicio();
+        addListeners();
+        formWindowOpened(null);  
     }
-    public void configArrayFriends(){
-        cantAmigos=ControlVentanas.registro.contarAmigos(this.usuarioLogueado);
+    public FaceMain(String correo,String user,String visitante,String nombreV){
+        initComponents();
+        usuarioLogueado=correo;
+        nombreUser=user;
+        configurarImagen(visitante);
+        limite=true;
+        visita=true;
+        configArrayFriends(visitante);
+        this.setTitle("Perfil Amigo, "+visitante);
+        this.configurarFormFace();
+        configurarVentanaEstados();
+        publicarEstadosPrincipales(limite,visitante);
+        configurarPanelIzquierdoPrincipal(true);
+        this.configurarLabelsInformacion(nombreV);
+        this.ObtenerDatosLogueado(visitante);
+        inicio();  
+        formWindowOpened(null);  
+    }
+    public void inicio(){
+        tamaño=this.amigosAceptados.length;
+        objetos=new Object[tamaño][3];
+        contenedores=new Container[tamaño][2];
+        crearElementos();
+    }
+    public void crearElementos(){
+        for(int i=0;i<objetos.length;i++){
+            objetos[i][0]=new JLabel();
+            objetos[i][1]=new JLabel();
+            objetos[i][2]=new JLabel();
+            configurarContenedores();
+            obtenerInfo(i);
+        }
+    }
+    public void configurarContenedores(){
+        this.PanelPrincipal.setLayout(new BoxLayout(PanelPrincipal,BoxLayout.Y_AXIS));
+        scroll.setViewportView(PanelPrincipal);
+        crearContenedores();
+        for(int i=0;i<contenedores.length;i++){
+            contenedores[i][0].setLayout(new FlowLayout(FlowLayout.LEFT));
+            contenedores[i][0].setSize(350, 100);
+            contenedores[i][1].setLayout(new BoxLayout(contenedores[i][1],BoxLayout.PAGE_AXIS));
+            contenedores[i][1].setSize(280, 100);
+        }
+    }
+    public void crearContenedores(){
+        for(int i=0;i<contenedores.length;i++){
+            contenedores[i][0]=new Container();
+            contenedores[i][1]=new Container();
+        }
+    }
+    public void obtenerInfo(int i){
+        String correo=this.amigosAceptados[i];
+        if(correo!=null){
+            ControlVentanas.configArchivoPerfil(correo);
+            ControlVentanas.crearRandom();
+            try {
+                ControlVentanas.registros.seek(0);
+                String n=ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.readChar();
+                ControlVentanas.registros.readLong();
+                ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.readLong();
+                ControlVentanas.registros.readInt();
+                String p=ControlVentanas.registros.readUTF();
+                ControlVentanas.registros.close();
+                configElementos(correo,n,p,i);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+    public int contarAmigosAceptados(){
+        int cont=0;
+        for(String c:amigosAceptados){
+            if(c!=null)
+                cont++;
+            else
+                break;
+        }
+        return cont;            
+    }
+    public int contarSolicitudesAmigos(){
+        int cont=0;
+        for(String c:solicitudesAmigos){
+            if(c!=null)
+                cont++;
+            else
+                break;
+        }
+        return cont;
+    }
+    public void configElementos(String correo,String n,String p,int i){
+        ((JLabel)objetos[i][0]).setSize(70,80);
+        ImageIcon imagen=new ImageIcon(p);
+        ImageIcon foto=new ImageIcon(imagen.getImage().getScaledInstance(80,90,Image.SCALE_DEFAULT));
+        ((JLabel)objetos[i][0]).setIcon(foto);
+        ((JLabel)objetos[i][0]).setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+        ((JLabel)objetos[i][1]).setText(n);
+        ((JLabel)objetos[i][2]).setText(correo);
+        colocarElementos(i);
+    }
+    public void colocarElementos(int i){
+        this.PanelPrincipal.add(contenedores[i][0]);
+        this.PanelPrincipal.add(Box.createRigidArea(new Dimension(0,20)));
+        contenedores[i][0].add((JLabel)objetos[i][0]);
+        contenedores[i][0].add(Box.createRigidArea(new Dimension(10,0)));
+        contenedores[i][1].add((JLabel)objetos[i][1]);
+        contenedores[i][1].add(Box.createRigidArea(new Dimension(0,20)));
+        contenedores[i][1].add((JLabel)objetos[i][2]);
+        contenedores[i][0].add(contenedores[i][1]);
+        scroll.setBorder(null);
+        scroll.setBounds(910,100,260, 500);
+        scroll.getViewport().setOpaque(false);
+        scroll.setOpaque(false);
+        this.add(scroll);        
+    }
+    private void addListeners(){
+        for(int i=0;i<contenedores.length;i++){
+            final int num=i;
+            ((JLabel)objetos[i][0]).addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt){
+                visitarPerfil(num);
+            }
+                @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                cambiarCursor();
+            }
+        });                    
+        }
+    }
+    public void visitarPerfil(int num){
+        String c=this.amigosAceptados[num];
+        String nombre=this.getNombre(c);
+        this.dispose();
+        ControlVentanas.crearFaceVisitante(this.usuarioLogueado,this.nombreUser, c, nombre);
+        
+    }
+    public void cambiarCursor(){
+        this.setCursor(Cursor.HAND_CURSOR);
+    }
+    
+    public void configArrayFriends(String correo){
+        ControlVentanas.agregarCuentasActivas();
+        cantAmigos=ControlVentanas.registro.contarAmigos(correo);
         correoAmigos= new String[cantAmigos];
         amigosAceptados=new String[cantAmigos];
         solicitudesAmigos=new String[cantAmigos];
-        this.agregarCorreoAmigos(this.usuarioLogueado);
+        this.agregarCorreoAmigos(correo);
     }
     private void configurarFormFace(){
         this.setVisible(true);
@@ -102,10 +260,16 @@ public class FaceMain extends javax.swing.JFrame {
         this.add( p , BorderLayout.CENTER);
         p.repaint();
     }
-   private void configurarPanelIzquierdoPrincipal(){
+   private void configurarPanelIzquierdoPrincipal(boolean b){
        Container panel=new Container();
        this.lblTitulo.setLocation(594-(this.lblTitulo.getWidth()/2), 52);
        panel.setLayout(new BoxLayout(panel,BoxLayout.Y_AXIS));
+       if(b){
+           this.jLabel2.setText("Regresar Mi Perfil");
+           this.jLabel1.setVisible(false);
+           this.txtIngresarEstado.setVisible(false);
+           this.btnInsertarEstado.setVisible(false);
+       }
        panel.add(this.jLabel2,BorderLayout.CENTER) ;
        panel.add(Box.createRigidArea(new Dimension(10,25)));
        panel.add(this.jLabel3,BorderLayout.CENTER) ;
@@ -113,11 +277,13 @@ public class FaceMain extends javax.swing.JFrame {
        panel.add(this.jLabel4,BorderLayout.CENTER) ;
        panel.add(Box.createRigidArea(new Dimension(10,25)));
        panel.setBounds((320/2)-(120/2),190,130,200);
+       this.jLabel2.setVisible(true);
        this.add(panel);
        this.jLabel5.setVisible(false);
        this.jLabel6.setVisible(false);
        this.jLabel7.setVisible(false);
        this.jLabel8.setVisible(false);
+       this.jLabel9.setVisible(false);
        this.lblNombre.setVisible(false);
        this.lblGenero.setVisible(false);
        this.lblNacimiento.setVisible(false);
@@ -139,11 +305,18 @@ public class FaceMain extends javax.swing.JFrame {
        panel.add(this.jLabel4,BorderLayout.CENTER);
        panel.setBounds((320/2)-(120/2),260,200,200);
        this.add(panel);
-       this.lblTitulo.setText(nombreUser);     
+       this.lblTitulo.setText(nombreUser); 
+       int tamAA=this.contarAmigosAceptados();
+       this.jLabel9.setText("Amigos ("+(tamAA==0?"foreverAlone":tamAA)+")");
+       this.jLabel9.setVisible(true);
+       int tamSA=this.contarSolicitudesAmigos();
        this.jLabel2.setVisible(false);
+       if(tamSA>0){
+           this.jLabel6.setText("Ver Solicitudes ("+tamSA+")");
+       }
        this.lblTitulo.setLocation(600-(this.lblTitulo.getWidth()/2), 52);
    }
-   private void configurarLabelsInformacion(){
+   private void configurarLabelsInformacion(String nombre){
        Container panel=new Container();
        panel.setLayout(new BoxLayout(panel,BoxLayout.PAGE_AXIS));
        panel.add(this.lblNombre,BorderLayout.CENTER);
@@ -155,14 +328,15 @@ public class FaceMain extends javax.swing.JFrame {
        panel.add(this.lblTelefono,BorderLayout.CENTER);
        panel.setBounds((320/2)-(120/2),160,200,200);
        this.add(panel);
-       this.lblTitulo.setText(nombreUser);     
-       this.jLabel2.setVisible(false);
+       this.lblTitulo.setText(nombre);     
+       if(!visita)
+           this.jLabel2.setVisible(false);
        this.lblTitulo.setLocation(600-(this.lblTitulo.getWidth()/2), 52);
    }
    private void configurarPrincipal(){
        configurarVentanaEstados();
-       publicarEstadosPrincipales(limite);
-       configurarPanelIzquierdoPrincipal();
+       publicarEstadosPrincipales(limite,this.usuarioLogueado);
+       configurarPanelIzquierdoPrincipal(false);
    }
   
        
@@ -171,7 +345,7 @@ public class FaceMain extends javax.swing.JFrame {
        this.jScrollPane1.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
        this.txtIngresarEstado.setBounds(394,170,315,20);
        btnInsertarEstado.setBounds(714, 169, 80, 23);
-       this.jScrollPane1.setBounds((594)-(200),200,400,350);          
+       this.jScrollPane1.setBounds((594)-(200),200,400,350);  
        this.txtEstados.setEditable(false);
    }
    public void agregarEstado(String estado){
@@ -215,6 +389,7 @@ public class FaceMain extends javax.swing.JFrame {
         lblGenero = new javax.swing.JLabel();
         lblNacimiento = new javax.swing.JLabel();
         lblTelefono = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         addMouseListener(new java.awt.event.MouseAdapter() {
@@ -305,7 +480,7 @@ public class FaceMain extends javax.swing.JFrame {
         getContentPane().add(jLabel3);
         jLabel3.setBounds(130, 250, 120, 16);
 
-        jLabel2.setFont(new java.awt.Font("Verdana", 1, 12));
+        jLabel2.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         jLabel2.setText("Ver mi perfíl");
         jLabel2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -341,7 +516,7 @@ public class FaceMain extends javax.swing.JFrame {
         getContentPane().add(lblTitulo);
         lblTitulo.setBounds(430, 70, 450, 40);
 
-        jLabel5.setFont(new java.awt.Font("Verdana", 1, 12));
+        jLabel5.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         jLabel5.setText("Home Feed");
         jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -354,7 +529,7 @@ public class FaceMain extends javax.swing.JFrame {
         getContentPane().add(jLabel5);
         jLabel5.setBounds(130, 310, 74, 16);
 
-        jLabel6.setFont(new java.awt.Font("Verdana", 1, 12));
+        jLabel6.setFont(new java.awt.Font("Verdana", 1, 12)); // NOI18N
         jLabel6.setText("Ver Solicitudes");
         jLabel6.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -413,6 +588,12 @@ public class FaceMain extends javax.swing.JFrame {
         getContentPane().add(lblTelefono);
         lblTelefono.setBounds(260, 310, 130, 14);
 
+        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel9.setText("jLabel9");
+        getContentPane().add(jLabel9);
+        jLabel9.setBounds(930, 40, 230, 22);
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -450,7 +631,7 @@ public class FaceMain extends javax.swing.JFrame {
     private void btnInsertarEstadoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnInsertarEstadoMouseClicked
         if(!this.txtIngresarEstado.getText().trim().equals("")){
             this.agregarEstado(this.txtIngresarEstado.getText());
-            this.publicarEstadosPrincipales(limite);
+            this.publicarEstadosPrincipales(limite,this.usuarioLogueado);
             this.txtIngresarEstado.setText("");
             this.txtIngresarEstado.requestFocus();
         }else{
@@ -490,24 +671,28 @@ public class FaceMain extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel3MouseClicked
 
     private void lblImagenPerfilMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblImagenPerfilMouseClicked
-            JFileChooser chooser= new JFileChooser();
-            chooser.setDialogTitle("Foto Perfil");
-            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            int opcion=chooser.showOpenDialog(this);
-            String path="";
-            if(opcion==0){
-                path=chooser.getSelectedFile().getAbsolutePath();
-                colocarImagenPerfil(path);
-            }else{
-                path="src/Adornos/user.png";
-                colocarImagenPerfil(path);
+            if(!visita){
+                JFileChooser chooser= new JFileChooser();
+                chooser.setDialogTitle("Foto Perfil");
+                chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                int opcion=chooser.showOpenDialog(this);
+                String path="";
+                if(opcion==0){
+                    path=chooser.getSelectedFile().getAbsolutePath();
+                    colocarImagenPerfil(path);
+                }else{
+                    path="src/Adornos/user.png";
+                    colocarImagenPerfil(path);
+                }
+                guardarPathImagenPerfil(path);
             }
-            guardarPathImagenPerfil(path);
+            
             
     }//GEN-LAST:event_lblImagenPerfilMouseClicked
 
     private void lblImagenPerfilMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblImagenPerfilMouseEntered
-        this.setCursor(Cursor.HAND_CURSOR);
+        if(!visita)
+            this.setCursor(Cursor.HAND_CURSOR);
     }//GEN-LAST:event_lblImagenPerfilMouseEntered
 
     private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
@@ -516,7 +701,12 @@ public class FaceMain extends javax.swing.JFrame {
     }//GEN-LAST:event_jLabel5MouseClicked
 
     private void jLabel6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel6MouseClicked
-
+        if(solicitudesAmigos.length==0 || solicitudesAmigos[0]==null){
+            JOptionPane.showMessageDialog(null, "No tienes ninguna solicitud pendiente a confirmar","No hay solicitudes",JOptionPane.INFORMATION_MESSAGE);
+        }else{
+            ControlVentanas.crearSolicitudAmigos();
+        }
+        
     }//GEN-LAST:event_jLabel6MouseClicked
 
     private void jLabel7MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel7MouseEntered
@@ -575,6 +765,7 @@ public class FaceMain extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblGenero;
     private javax.swing.JLabel lblImagenPerfil;
@@ -585,28 +776,30 @@ public class FaceMain extends javax.swing.JFrame {
     private javax.swing.JTextArea txtEstados;
     private javax.swing.JTextField txtIngresarEstado;
     // End of variables declaration//GEN-END:variables
-    
-    private String getImagenPerfil(){
-        return ControlVentanas.registro.getPathImagen(this.usuarioLogueado);
+    public void clickVerPerfil(){
+        jLabel2MouseClicked(null);
     }
-    private void configurarImagen(){
+    private String getImagenPerfil(String correo){
+        return ControlVentanas.registro.getPathImagen(correo);
+    }
+    private void configurarImagen(String correo){
         this.lblImagenPerfil.setSize(110, 120);
         this.lblImagenPerfil.setLocation((326/2)-(110/2),28); 
-        colocarImagenPerfil(getImagenPerfil());
+        colocarImagenPerfil(getImagenPerfil(correo));
     }
     private void colocarImagenPerfil(String path){
         ImageIcon imagen=new ImageIcon(path);
         ImageIcon foto=new ImageIcon(imagen.getImage().getScaledInstance(this.lblImagenPerfil.getWidth(), this.lblImagenPerfil.getHeight(), Image.SCALE_DEFAULT));        
         this.lblImagenPerfil.setIcon(foto);
     }
-    public void publicarEstadosPrincipales(boolean lim){
+    public void publicarEstadosPrincipales(boolean lim,String correo){
         try {
             ControlVentanas.configArchivoEstados();
             ControlVentanas.crearRandom();
             if(ControlVentanas.registros.length()>0){
                 ControlVentanas.registros.seek(0);
                 estados="----------------------------------------------------------------------------------------------\n";
-                imprimirEstadosPrincipales(lim);
+                imprimirEstadosPrincipales(lim,correo);
                 this.txtEstados.setText(estados);
                 ControlVentanas.registros.close();
             }            
@@ -615,7 +808,7 @@ public class FaceMain extends javax.swing.JFrame {
         }
     }
 
-    private void imprimirEstadosPrincipales(boolean lim)throws IOException{
+    private void imprimirEstadosPrincipales(boolean lim,String correo)throws IOException{
         String c="",n="",e="",f="";
         boolean b=false;
         
@@ -625,15 +818,15 @@ public class FaceMain extends javax.swing.JFrame {
             e=ControlVentanas.registros.readUTF();
             f=ControlVentanas.registros.readUTF();
             b=ControlVentanas.registros.readBoolean();
-            this.imprimirEstadosPrincipales(lim);
+            this.imprimirEstadosPrincipales(lim,correo);
         }
         if(b){
             if(lim){
-                if(c.equals(this.usuarioLogueado)){
+                if(c.equals(correo)){
                     estados+="("+f+")"+" "+n+" publicó: \n"+e+"\n----------------------------------------------------------------------------------------------\n";
                 }
             }else{
-                if(c.equals(this.usuarioLogueado) || this.buscarEnLosAmigos(c,1)){
+                if(c.equals(correo) || this.buscarEnLosAmigos(c,1)){
                     estados+="("+f+")"+" "+n+" publicó: \n"+e+"\n----------------------------------------------------------------------------------------------\n";
                 }
             }  
@@ -689,13 +882,13 @@ public class FaceMain extends javax.swing.JFrame {
                 ControlVentanas.registros.seek(puntero);
                 String c=ControlVentanas.registros.readUTF();
                 boolean b=ControlVentanas.registros.readBoolean();
-                ControlVentanas.registros.readBoolean();
+                boolean s=ControlVentanas.registros.readBoolean();
                 puntero=ControlVentanas.registros.getFilePointer();
                 if(ControlVentanas.verificarCuentaActiva(c)){
                     if(b){
                         this.amigosAceptados[contadorA]=c;
                         contadorA++;
-                    }else{
+                    }else if(!s){
                         this.solicitudesAmigos[contadorS]=c;
                         contadorS++;
                     }                    
