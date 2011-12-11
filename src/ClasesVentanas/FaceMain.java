@@ -220,8 +220,17 @@ public class FaceMain extends javax.swing.JFrame {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 cambiarCursor();
             }
-        });                    
+        });
         }
+        scroll.addMouseListener(new java.awt.event.MouseAdapter() {
+                @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                cursorNormal();
+            }
+        });
+    }
+    public void cursorNormal(){
+        this.setCursor(null);
     }
     public void visitarPerfil(int num){
         String c=this.amigosAceptados[num];
@@ -276,7 +285,12 @@ public class FaceMain extends javax.swing.JFrame {
        panel.add(Box.createRigidArea(new Dimension(10,25)));
        panel.add(this.jLabel4,BorderLayout.CENTER) ;
        panel.add(Box.createRigidArea(new Dimension(10,25)));
-       panel.setBounds((320/2)-(120/2),190,130,200);
+       if(!b){
+           panel.setBounds((320/2)-(120/2),190,130,200);
+       }else{
+           panel.setBounds((320/2)-(120/2),260,130,200);
+       }
+       
        this.jLabel2.setVisible(true);
        this.add(panel);
        this.jLabel5.setVisible(false);
@@ -284,10 +298,13 @@ public class FaceMain extends javax.swing.JFrame {
        this.jLabel7.setVisible(false);
        this.jLabel8.setVisible(false);
        this.jLabel9.setVisible(false);
-       this.lblNombre.setVisible(false);
-       this.lblGenero.setVisible(false);
-       this.lblNacimiento.setVisible(false);
-       this.lblTelefono.setVisible(false);
+       if(!b){
+           this.lblNombre.setVisible(false);
+           this.lblGenero.setVisible(false);
+           this.lblNacimiento.setVisible(false);
+           this.lblTelefono.setVisible(false);
+       }
+       
    }
    private void configurarLabelsProfile(){
        Container panel=new Container();

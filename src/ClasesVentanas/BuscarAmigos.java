@@ -10,6 +10,7 @@
  */
 package ClasesVentanas;
 
+import Adornos.panelBuscarAmigos;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
@@ -18,6 +19,7 @@ import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,12 +42,19 @@ public class BuscarAmigos extends javax.swing.JFrame {
     /** Creates new form BuscarAmigos */
     public BuscarAmigos(String correo) {
         initComponents();
+        this.setTitle("Buscar Amigos");
         usuarioLogueado=correo;
         this.setSize(450,350);
         this.setVisible(true);
         this.setLocation((tamañoPantalla.width/2)-(this.getWidth()/2),(tamañoPantalla.height/2)-(this.getHeight()/2));
         ocultarElementos();
         panelLabels();
+        formWindowOpened(null);
+    }
+    private void formWindowOpened(WindowEvent evt) {
+        panelBuscarAmigos p = new panelBuscarAmigos();
+        this.add( p , BorderLayout.CENTER);
+        p.repaint();
     }
     private void amigoEncontrado(){
         this.lblImagenPerfil.setVisible(true);
@@ -96,7 +105,6 @@ public class BuscarAmigos extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         txtCorreo = new javax.swing.JTextField();
         lblImagenPerfil = new javax.swing.JLabel();
@@ -113,12 +121,6 @@ public class BuscarAmigos extends javax.swing.JFrame {
             }
         });
         getContentPane().setLayout(null);
-
-        jLabel1.setFont(new java.awt.Font("Celtic Garamond the 2nd", 1, 18));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Busqueda de Amigos");
-        getContentPane().add(jLabel1);
-        jLabel1.setBounds(90, 20, 230, 30);
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 12));
         jLabel2.setText("Ingrese el correo: ");
@@ -280,7 +282,6 @@ public class BuscarAmigos extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnEnviarSolicitud;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel lblFecha;
     private javax.swing.JLabel lblGenero;
@@ -307,7 +308,6 @@ public class BuscarAmigos extends javax.swing.JFrame {
         this.lblImagenPerfil.setIcon(foto);  
     }
     private void elementosPosicionNormal(){
-        this.jLabel1.setLocation((this.getWidth()/2)-(this.jLabel1.getWidth()/2), 20);
         this.jLabel2.setLocation((this.getWidth()/2)-(this.txtCorreo.getWidth()/2), 110);
         this.txtCorreo.setLocation((this.getWidth()/2)-(this.txtCorreo.getWidth()/2),130);
         this.btnBuscar.setLocation((this.getWidth()/2)-(this.btnBuscar.getWidth()/2), 210);

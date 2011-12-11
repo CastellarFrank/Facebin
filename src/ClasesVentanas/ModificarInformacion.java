@@ -10,7 +10,10 @@
  */
 package ClasesVentanas;
 
+import Adornos.panelModificarInfo;
+import java.awt.BorderLayout;
 import java.awt.Toolkit;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,12 +31,18 @@ public class ModificarInformacion extends javax.swing.JFrame {
     public ModificarInformacion(String correo) {
         usuarioLogueado=correo;
         initComponents();
+        this.setTitle("Modificar Información Personal");
         this.configItems();
         this.actualizarInformacion(correo);
         this.setSize(450,350);
         this.setVisible(true);
         this.setLocation((tamañoPantalla.width/2)-(this.getWidth()/2),(tamañoPantalla.height/2)-(this.getHeight()/2));
-        
+        formWindowOpened(null);
+    }
+    private void formWindowOpened(WindowEvent evt) {
+        panelModificarInfo p = new panelModificarInfo();
+        this.add( p , BorderLayout.CENTER);
+        p.repaint();
     }
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -44,7 +53,6 @@ public class ModificarInformacion extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         lblGenero = new javax.swing.JLabel();
         cmbAño = new javax.swing.JComboBox();
-        lblTitulo = new javax.swing.JLabel();
         cmbMes = new javax.swing.JComboBox();
         jLabel3 = new javax.swing.JLabel();
         cmbEstado = new javax.swing.JComboBox();
@@ -68,9 +76,6 @@ public class ModificarInformacion extends javax.swing.JFrame {
                 cmbAñoItemStateChanged(evt);
             }
         });
-
-        lblTitulo.setFont(new java.awt.Font("Celtic Garamond the 2nd", 1, 18));
-        lblTitulo.setText("Modificar Informacion");
 
         cmbMes.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         cmbMes.addItemListener(new java.awt.event.ItemListener() {
@@ -99,17 +104,14 @@ public class ModificarInformacion extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(61, 61, 61)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(113, 113, 113)
-                        .addComponent(lblTitulo))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(152, 152, 152)
+                        .addGap(82, 82, 82)
                         .addComponent(lblGenero)
                         .addGap(8, 8, 8)
                         .addComponent(cmbGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(70, 70, 70)
                         .addComponent(jLabel1)
                         .addGap(9, 9, 9)
                         .addComponent(cmbMes, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -118,7 +120,7 @@ public class ModificarInformacion extends javax.swing.JFrame {
                         .addGap(13, 13, 13)
                         .addComponent(cmbDia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(136, 136, 136)
+                        .addGap(66, 66, 66)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(6, 6, 6)
@@ -131,16 +133,14 @@ public class ModificarInformacion extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cmbEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(184, 184, 184)
+                        .addGap(114, 114, 114)
                         .addComponent(btnActualizar)))
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addContainerGap(63, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(lblTitulo)
-                .addGap(36, 36, 36)
+                .addGap(80, 80, 80)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cmbGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -160,7 +160,7 @@ public class ModificarInformacion extends javax.swing.JFrame {
                     .addComponent(jLabel3))
                 .addGap(18, 18, 18)
                 .addComponent(btnActualizar)
-                .addGap(103, 103, 103))
+                .addContainerGap(103, Short.MAX_VALUE))
         );
 
         java.awt.Dimension screenSize = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
@@ -206,7 +206,6 @@ public class ModificarInformacion extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel lblGenero;
-    private javax.swing.JLabel lblTitulo;
     private javax.swing.JFormattedTextField txtTelefono;
     // End of variables declaration//GEN-END:variables
 

@@ -10,12 +10,15 @@
  */
 package ClasesVentanas;
 
+import Adornos.panelSolicitudAmistad;
+import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,9 +45,16 @@ public class SolicitudesAmigos extends javax.swing.JFrame {
     /** Creates new form SolicitudesAmigos */
     public SolicitudesAmigos() {
         initComponents();
+        this.setTitle("Solicitudes de Amistad");
         this.setSize(400, 570);
         this.setVisible(true);
         inicio();
+        formWindowOpened(null);
+    }
+    private void formWindowOpened(WindowEvent evt) {
+        panelSolicitudAmistad p = new panelSolicitudAmistad();
+        this.add( p , BorderLayout.CENTER);
+        p.repaint();
     }
     public void inicio(){
         tamaño=ControlVentanas.face.solicitudesAmigos.length;
@@ -173,17 +183,13 @@ public class SolicitudesAmigos extends javax.swing.JFrame {
                     public void actionPerformed(ActionEvent evt){
                         if(cambiosSolicitud(num,true)){
                             JOptionPane.showMessageDialog(null,"Has agregado a un nuevo amigo","Solicitud confirmada",JOptionPane.INFORMATION_MESSAGE);
-                        }else{
-                            JOptionPane.showMessageDialog(null,"Has rechazado la solicitud","Solicitud Rechazada",JOptionPane.INFORMATION_MESSAGE);
                         }
                         actualizar();
                     }
                 });
             ((JButton)objetos[i][4]).addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent evt){
-                        if(cambiosSolicitud(num,false)){
-                            JOptionPane.showMessageDialog(null,"Has agregado a un nuevo amigo","Solicitud confirmada",JOptionPane.INFORMATION_MESSAGE);
-                        }else{
+                        if(!cambiosSolicitud(num,false)){
                             JOptionPane.showMessageDialog(null,"Has rechazado la solicitud","Solicitud Rechazada",JOptionPane.INFORMATION_MESSAGE);
                         }
                         actualizar();
@@ -210,11 +216,12 @@ public class SolicitudesAmigos extends javax.swing.JFrame {
                 }
             }
             ControlVentanas.registros.close();
-            escribirArchivoAmigoAceptado(correo);
+            
         }catch(IOException ex){
             ex.printStackTrace();
         }
         if(b){
+            escribirArchivoAmigoAceptado(correo);
             return true;
         }else{
             return false;
