@@ -180,6 +180,7 @@ public class SolicitudesAmigos extends javax.swing.JFrame {
         for(int i=0;i<contenedores.length;i++){
             final int num=i;
             ((JButton)objetos[i][3]).addActionListener(new ActionListener() {
+                @Override
                     public void actionPerformed(ActionEvent evt){
                         if(cambiosSolicitud(num,true)){
                             JOptionPane.showMessageDialog(null,"Has agregado a un nuevo amigo","Solicitud confirmada",JOptionPane.INFORMATION_MESSAGE);

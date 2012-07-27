@@ -20,8 +20,9 @@ public class panelModificarInfo extends javax.swing.JPanel {
     @Override
     public void paint(Graphics g){
         Dimension tamanio = getSize();
+        System.out.println(getClass().getResource("modificarInformacion.jpg"));
         ImageIcon imagenFondo = new ImageIcon(getClass().getResource("modificarInformacion.jpg"));        
-        g.drawImage(imagenFondo.getImage(),0,0,tamanio.width, tamanio.height, null);        
+        g.drawImage(imagenFondo.getImage(),0,0,tamanio.width, tamanio.height, null);      
         setOpaque(false);
         super.paintComponent(g);
     }  
