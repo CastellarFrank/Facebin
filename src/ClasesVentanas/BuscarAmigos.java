@@ -49,9 +49,9 @@ public class BuscarAmigos extends javax.swing.JFrame {
         this.setLocation((tamañoPantalla.width/2)-(this.getWidth()/2),(tamañoPantalla.height/2)-(this.getHeight()/2));
         ocultarElementos();
         panelLabels();
-        formWindowOpened(null);
+        formWindowOpened();
     }
-    private void formWindowOpened(WindowEvent evt) {
+    private void formWindowOpened() {
         panelBuscarAmigos p = new panelBuscarAmigos();
         this.add( p , BorderLayout.CENTER);
         p.repaint();
